@@ -42,15 +42,15 @@ app.get("/test-ai", async (req, res) => {
   }
 });
 
-app.use(requireAuth());
-app.use("/api/ai", aiRouter);
-app.use("/api/user", userRouter);
+// Apply auth middleware only to protected routes
+app.use("/api/ai", requireAuth(), aiRouter);
+app.use("/api/user", requireAuth(), userRouter);
 
 // For Vercel serverless deployment
 export default app;
 
 // For local development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
