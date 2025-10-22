@@ -48,6 +48,11 @@ app.get("/test-ai", async (req, res) => {
   }
 });
 
+// Test POST endpoint without auth
+app.post("/test-post", (req, res) => {
+  res.json({ success: true, message: "POST request works!", data: req.body });
+});
+
 // Apply auth middleware only to protected routes
 app.use("/api/ai", requireAuth(), aiRouter);
 app.use("/api/user", requireAuth(), userRouter);
