@@ -8,15 +8,14 @@ import userRouter from "../routes/userRoutes.js";
 
 const app = express();
 
-// Initialize Cloudinary
-let cloudinaryInitialized = false;
-if (!cloudinaryInitialized) {
-  await connectCloudinary();
-  cloudinaryInitialized = true;
-}
+// Initialize Cloudinary (non-blocking for serverless)
+connectCloudinary().catch(console.error);
 
 // Enable Cross-Origin Resource Sharing (CORS) for the application
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json());
 app.use(clerkMiddleware());
 
