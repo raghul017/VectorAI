@@ -12,10 +12,12 @@ const app = express();
 connectCloudinary().catch(console.error);
 
 // Enable Cross-Origin Resource Sharing (CORS) for the application
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(clerkMiddleware());
 
@@ -50,4 +52,8 @@ app.get("/test-ai", async (req, res) => {
 app.use("/api/ai", requireAuth(), aiRouter);
 app.use("/api/user", requireAuth(), userRouter);
 
-export default app;
+// Vercel serverless function handler
+export default async (req, res) => {
+  // Handle the request using Express app
+  return app(req, res);
+};
