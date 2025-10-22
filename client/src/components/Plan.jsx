@@ -1,4 +1,5 @@
 import React from "react";
+import { PricingTable } from "@clerk/clerk-react";
 
 const Plan = () => {
   return (
@@ -13,10 +14,7 @@ const Plan = () => {
         </p>
       </div>
       <div className="mt-14 max-sm:mx-8">
-        <div className="text-center text-gray-400">
-          Billing is currently disabled. Enable billing in Clerk to show pricing
-          plans.
-        </div>
+        <PricingTable />
       </div>
     </div>
   );
