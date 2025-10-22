@@ -52,8 +52,5 @@ app.get("/test-ai", async (req, res) => {
 app.use("/api/ai", requireAuth(), aiRouter);
 app.use("/api/user", requireAuth(), userRouter);
 
-// Vercel serverless function handler
-export default async (req, res) => {
-  // Handle the request using Express app
-  return app(req, res);
-};
+// Export Express app for Vercel
+export default app;
