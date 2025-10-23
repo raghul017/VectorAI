@@ -54,50 +54,85 @@ const Community = () => {
     if (user) {
       fetchCreations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return !loading ? (
-    <div className="flex-1 h-full flex flex-col gap-4 p-6 bg-[#0A0A0F]">
+    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
       {/* Grid Pattern Overlay */}
       <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
       
-      <h2 className="relative z-10 text-2xl font-bold text-white">Community Creations</h2>
-      <div className="relative z-10 bg-white/5 backdrop-blur-sm border border-white/10 h-full w-full rounded-2xl overflow-y-scroll p-4">
-        {creations.map((creation, index) => (
-          <div
-            key={index}
-            className="relative group inline-block pl-3 pt-3 w-full sm:max-w-1/2 lg:max-w-1/3"
-          >
-            <img
-              src={creation.content}
-              alt=""
-              className="w-full h-full
-              object-cover rounded-lg"
-            />
+      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+            Community Gallery
+          </h1>
+          <p className="text-gray-400">
+            Explore and like amazing AI-generated images from our community
+          </p>
+        </div>
 
-            <div className="absolute bottom-0 top-0 right-0 left-0 flex gap-2 items-end justify-end group-hover:justify-between p-3 group-hover:bg-gradient-to-b from-transparent to-black/80 text-white rounded-lg transition-all duration-300">
-              <p className="text-sm hidden group-hover:block">
-                {creation.prompt} :: {user.fullName}
-              </p>
-              <div className="flex items-center gap-1">
-                <p>{creation.likes.length}</p>
-                <Heart
-                  onClick={() => imageLikeToggle(creation.id)}
-                  className={`min-w-5 h-5 hover:scale-110 cursor-pointer  ${
-                    creation.likes.includes(user.id)
-                      ? "fill-red-500 text-red-600"
-                      : "text-white"
-                  }`}
-                />
-              </div>
+        {creations.length === 0 ? (
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-12 text-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center">
+              <Heart className="w-10 h-10 text-purple-400" />
             </div>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              No creations yet
+            </h3>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+              Be the first to share your AI-generated images with the community!
+            </p>
           </div>
-        ))}
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {creations.map((creation, index) => (
+              <div
+                key={index}
+                className="relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]"
+              >
+                <img
+                  src={creation.content}
+                  alt={creation.prompt}
+                  className="w-full aspect-square object-cover"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                  <p className="text-white text-sm font-medium mb-2 line-clamp-2">
+                    {creation.prompt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-300 text-xs">
+                      by {creation.user_name || user.fullName}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white text-sm font-semibold">
+                        {creation.likes.length}
+                      </span>
+                      <Heart
+                        onClick={() => imageLikeToggle(creation.id)}
+                        className={`w-5 h-5 hover:scale-110 cursor-pointer transition-transform ${
+                          creation.likes.includes(user.id)
+                            ? "fill-red-500 text-red-500"
+                            : "text-white hover:text-red-400"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   ) : (
-    <div className="flex-1 h-full flex items-center justify-center">
-      <p className="text-gray-500">Loading creations...</p>
+    <div className="h-full flex items-center justify-center bg-[#0A0A0F]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+        <p className="text-gray-400 font-medium">Loading creations...</p>
+      </div>
     </div>
   );
 };

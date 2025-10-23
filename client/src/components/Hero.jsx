@@ -9,12 +9,14 @@ const Hero = () => {
     <div className="relative flex flex-col justify-center items-center w-full px-4 sm:px-20 xl:px-32 min-h-screen bg-[#0A0A0F] overflow-hidden">
       {/* Animated Gradient Orb Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-blue-500/30 to-cyan-500/30 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-purple-600/20 to-blue-600/20 rounded-full blur-3xl animate-blob"></div>
+          <div className="absolute top-20 -right-20 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
         </div>
         {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)]"></div>
       </div>
 
       <div className="relative z-10 text-center mb-12 max-w-5xl">
@@ -30,16 +32,16 @@ const Hero = () => {
         </div>
 
         {/* Main Heading with Gradient */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.1] mb-6">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.1] mb-6 tracking-tight">
           <span className="text-white">Turn Raw Data into</span>
           <br />
-          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent animate-gradient">
             Actionable Insights
           </span>
           <span className="text-white"> – Instantly</span>
         </h1>
 
-        <p className="mt-6 max-w-2xl mx-auto text-gray-400 text-lg sm:text-xl leading-relaxed">
+        <p className="mt-6 max-w-2xl mx-auto text-gray-400 text-base sm:text-lg leading-relaxed">
           Transform your content creation with our suite of powerful AI tools.
           Write articles, generate stunning images, and enhance your workflow in
           seconds.
