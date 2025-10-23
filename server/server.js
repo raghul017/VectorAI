@@ -7,10 +7,17 @@ import connectCloudinary from "./configs/cloudinary.js";
 import userRouter from "./routes/userRoutes.js";
 
 const app = express();
-await connectCloudinary();
+
+// Initialize Cloudinary (non-blocking for serverless compatibility)
+connectCloudinary().catch(console.error);
 
 // Enable Cross-Origin Resource Sharing (CORS) for the application
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(clerkMiddleware());
 
