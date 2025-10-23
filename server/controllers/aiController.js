@@ -3,7 +3,6 @@ import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import { v2 as cloudinary } from "cloudinary";
 import axios from "axios";
-import fs from "fs";
 import pdf from "pdf-parse/lib/pdf-parse.js";
 import FormData from "form-data";
 import dotenv from "dotenv";
@@ -302,8 +301,6 @@ export const generateImage = async (req, res) => {
 
 // Remove Background Image
 export const removeImageBackground = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const image = req.file;
@@ -316,11 +313,13 @@ export const removeImageBackground = async (req, res) => {
       });
     }
 
-    filePath = image.path;
     console.log("Processing image:", image.originalname);
 
+    // Convert buffer to base64 for Cloudinary
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
+
     // All features are free - everyone can remove backgrounds
-    const { secure_url } = await cloudinary.uploader.upload(image.path, {
+    const { secure_url } = await cloudinary.uploader.upload(base64Image, {
       transformation: [
         {
           effect: "background_removal",
@@ -341,17 +340,10 @@ export const removeImageBackground = async (req, res) => {
   } catch (error) {
     console.error("Error in removeImageBackground:", error);
     res.json({ success: false, message: error.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
   }
 };
 
 export const removeImageObject = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const image = req.file;
@@ -372,10 +364,11 @@ export const removeImageObject = async (req, res) => {
       });
     }
 
-    filePath = image.path;
+    // Convert buffer to base64 for Cloudinary
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
 
     // All features are free - everyone can remove objects
-    const { public_id } = await cloudinary.uploader.upload(image.path);
+    const { public_id } = await cloudinary.uploader.upload(base64Image);
 
     const imageUrl = cloudinary.url(public_id, {
       transformation: [{ effect: `gen_remove:${object}` }],
@@ -392,17 +385,10 @@ export const removeImageObject = async (req, res) => {
   } catch (err) {
     console.error("Error in removeImageObject:", err);
     res.json({ success: false, message: err.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
   }
 };
 
 export const resumeReview = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const resume = req.file;
@@ -415,8 +401,6 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    filePath = resume.path;
-
     // All features are free - everyone can get resume reviews
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
@@ -425,8 +409,8 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    const dataBuffer = fs.readFileSync(resume.path);
-    const pdfData = await pdf(dataBuffer);
+    // Use buffer directly (no file path in serverless)
+    const pdfData = await pdf(resume.buffer);
 
     if (!pdfData.text || pdfData.text.trim().length === 0) {
       return res.json({
@@ -460,10 +444,5 @@ export const resumeReview = async (req, res) => {
   } catch (err) {
     console.error("Error in resumeReview:", err);
     res.json({ success: false, message: err.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
   }
 };
