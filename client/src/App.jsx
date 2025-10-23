@@ -9,19 +9,9 @@ import RemoveObject from "./pages/RemoveObject";
 import ReviewResume from "./pages/ReviewResume";
 import Community from "./pages/Community";
 import { Route, Routes } from "react-router-dom";
-
-import { useAuth } from "@clerk/clerk-react";
-import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  // const {getToken}=useAuth()
-  // useEffect(()=>{
-  //   getToken().then((token)=> console.log(token));
-  // },[])
-
-  console.log("App component rendering...");
-
   return (
     <div>
       <Toaster></Toaster>
