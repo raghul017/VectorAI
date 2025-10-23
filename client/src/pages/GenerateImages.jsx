@@ -13,9 +13,9 @@ const GenerateImages = () => {
     "Cartoon style",
     "Anime style",
     "Fantasy style",
-    "Realistic style",
     "3D style",
     "Portrait style",
+    "Oil painting",
   ];
 
   const [selectedStyle, setSelectedStyle] = useState("Realistic");

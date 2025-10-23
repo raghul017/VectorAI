@@ -40,7 +40,7 @@ export const generateArticle = async (req, res) => {
 
     res.json({ success: true, content });
   } catch (err) {
-    console.error("Error in reviewResume:", err);
+    console.error("Error in generateArticle:", err);
     res.json({ success: false, message: err.message });
   }
 };
@@ -91,6 +91,13 @@ export const generateBlogTitle = async (req, res) => {
       });
     }
 
+    if (prompt.length > 5000) {
+      return res.json({
+        success: false,
+        message: "Prompt is too long. Maximum 5000 characters allowed.",
+      });
+    }
+
     // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
@@ -123,8 +130,14 @@ export const generateImage = async (req, res) => {
       });
     }
 
+    if (prompt.length > 1000) {
+      return res.json({
+        success: false,
+        message: "Prompt is too long. Maximum 1000 characters allowed.",
+      });
+    }
+
     // Check daily rate limit (15 images per day)
-    const DAILY_LIMIT = 15;
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Start of today
 
@@ -138,13 +151,13 @@ export const generateImage = async (req, res) => {
 
     const currentCount = parseInt(todayCount[0].count);
     console.log(
-      `User ${userId} has generated ${currentCount}/${DAILY_LIMIT} images today`
+      `User ${userId} has generated ${currentCount}/${DAILY_IMAGE_LIMIT} images today`
     );
 
-    if (currentCount >= DAILY_LIMIT) {
+    if (currentCount >= DAILY_IMAGE_LIMIT) {
       return res.json({
         success: false,
-        message: `Daily limit reached! You can generate up to ${DAILY_LIMIT} images per day. Your limit will reset tomorrow.`,
+        message: `Daily limit reached! You can generate up to ${DAILY_IMAGE_LIMIT} images per day. Your limit will reset tomorrow.`,
       });
     }
 
@@ -276,12 +289,6 @@ export const generateImage = async (req, res) => {
       });
     }
 
-    if (err.response?.status === 503) {
-      return res.json({
-        success: false,
-        message: "Model is loading. Please wait 20 seconds and try again.",
-      });
-    }
     res.json({ success: false, message: err.message });
   }
 };
