@@ -11,6 +11,9 @@ dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Constants
+const DAILY_IMAGE_LIMIT = 15;
+
 // Article Generation
 export const generateArticle = async (req, res) => {
   try {
@@ -37,7 +40,39 @@ export const generateArticle = async (req, res) => {
 
     res.json({ success: true, content });
   } catch (err) {
-    console.error("Error in generateArticle:", err);
+    console.error("Error in reviewResume:", err);
+    res.json({ success: false, message: err.message });
+  }
+};
+
+// Get user's daily image generation usage
+export const getImageUsage = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+
+    const todayCount = await sql`
+      SELECT COUNT(*) as count 
+      FROM creations 
+      WHERE user_id = ${userId} 
+      AND type = 'image' 
+      AND created_at >= ${today.toISOString()}
+    `;
+
+    const used = parseInt(todayCount[0].count);
+    const remaining = DAILY_IMAGE_LIMIT - used;
+
+    res.json({
+      success: true,
+      limit: DAILY_IMAGE_LIMIT,
+      used: used,
+      remaining: remaining > 0 ? remaining : 0,
+      resetTime: new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+    });
+  } catch (err) {
+    console.error("Error in getImageUsage:", err);
     res.json({ success: false, message: err.message });
   }
 };
