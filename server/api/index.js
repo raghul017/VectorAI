@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import { clerkMiddleware, requireAuth } from "@clerk/express";
+import { clerkMiddleware } from "@clerk/express";
 import aiRouter from "../routes/aiRoutes.js";
 import connectCloudinary from "../configs/cloudinary.js";
 import userRouter from "../routes/userRoutes.js";
@@ -18,7 +18,11 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+
+// Increase payload size limits for file uploads
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
 app.use(clerkMiddleware());
 
 app.get("/", (req, res) => res.send("API Server is running! ✅"));
@@ -62,25 +66,32 @@ app.post("/test-post", (req, res) => {
   res.json({ success: true, message: "POST request works!", data: req.body });
 });
 
-// Apply auth middleware only to protected routes
-app.use("/api/ai", requireAuth(), aiRouter);
-app.use("/api/user", requireAuth(), userRouter);
+// Mount routers - auth is handled by individual route middleware
+app.use("/api/ai", aiRouter);
+app.use("/api/user", userRouter);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-    error: process.env.NODE_ENV === "development" ? err : {},
-  });
+// 404 handler - must come BEFORE error handler
+app.use((req, res, next) => {
+  const error = new Error("Route not found");
+  error.status = 404;
+  next(error);
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
+// Error handling middleware - must be LAST
+app.use((err, req, res, next) => {
+  console.error("=== SERVER ERROR ===");
+  console.error("Path:", req.path);
+  console.error("Method:", req.method);
+  console.error("Error:", err.message);
+  console.error("Stack:", err.stack);
+
+  const status = err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(status).json({
     success: false,
-    message: "Route not found",
+    message: message,
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 });
 
