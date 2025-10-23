@@ -9,45 +9,26 @@ import userRouter from "../routes/userRoutes.js";
 const app = express();
 
 // Initialize Cloudinary (non-blocking for serverless)
-connectCloudinary().catch((error) => {
-  console.error("Cloudinary initialization error:", error);
-});
+connectCloudinary().catch(console.error);
 
 // Enable Cross-Origin Resource Sharing (CORS) for the application
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? [
-            "https://vectorai-client.vercel.app",
-            "https://vectorai-client.vercel.app/",
-          ]
-        : true,
+    origin: true,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use(express.json());
+app.use(clerkMiddleware());
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.get("/", (req, res) => res.send("API Server is running! ✅"));
 
-// Apply Clerk middleware with error handling
-app.use((req, res, next) => {
-  try {
-    clerkMiddleware()(req, res, next);
-  } catch (error) {
-    console.error("Clerk middleware error:", error);
-    next();
-  }
-});
-
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "Vector.AI API is running",
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "healthy", 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development",
+    environment: process.env.NODE_ENV || "production"
   });
 });
 
@@ -85,12 +66,13 @@ app.post("/test-post", (req, res) => {
 app.use("/api/ai", requireAuth(), aiRouter);
 app.use("/api/user", requireAuth(), userRouter);
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err : {}
   });
 });
 
@@ -98,20 +80,9 @@ app.get("/health", (req, res) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route not found",
-    path: req.path,
+    message: "Route not found"
   });
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error("Global error handler:", err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal server error",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
-  });
-});
-
-// Export Express app for Vercel
+// Export Express app for Vercel serverless
 export default app;
