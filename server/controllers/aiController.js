@@ -94,21 +94,30 @@ export const generateImage = async (req, res) => {
       process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
     );
 
-    // Using FLUX.1-schnell - fast and free, no license acceptance needed
+    // Using SDXL-Lightning - MUCH better quality, fast generation!
+    // Recommended by Hugging Face for high-quality images
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+      "https://api-inference.huggingface.co/models/ByteDance/SDXL-Lightning";
 
     const response = await axios.post(
       HF_API_URL,
-      { inputs: prompt },
+      {
+        inputs: prompt,
+        parameters: {
+          num_inference_steps: 4, // SDXL-Lightning works best with 4 steps
+          guidance_scale: 7.5, // Higher = more prompt adherence, better quality
+          width: 1024, // High resolution
+          height: 1024,
+        },
+      },
       {
         headers: {
           Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
           "Content-Type": "application/json",
-          Accept: "image/png", // Specify we want image output
+          Accept: "image/png",
         },
         responseType: "arraybuffer",
-        timeout: 90000, // 90 second timeout
+        timeout: 90000,
       }
     );
 
