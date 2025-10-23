@@ -84,15 +84,15 @@ export default function Sidebar({ sidebar, setSidebar }) {
       {/* Navigation Section */}
       <div className="flex-1 overflow-y-auto py-6">
         {/* User Profile Header */}
-        <div className="px-6 mb-6 animate-fadeIn">
+        <div className="px-6 mb-6 animate-slideInLeft">
           <div
-            className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer transform hover:scale-105"
+            className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-500 cursor-pointer hover-lift"
             onClick={openUserProfile}
           >
             <img
               src={user.imageUrl}
               alt="User Avatar"
-              className="w-12 h-12 rounded-full ring-2 ring-purple-500/30"
+              className="w-12 h-12 rounded-full ring-2 ring-purple-500/30 hover:scale-110 transition-transform duration-500"
             />
             <div className="flex-1 min-w-0">
               <h2 className="text-sm font-semibold text-white truncate">
@@ -129,15 +129,15 @@ export default function Sidebar({ sidebar, setSidebar }) {
               onClick={() => setSidebar(false)}
               className={({ isActive }) =>
                 `flex items-center justify-between gap-3 px-4 py-3 rounded-xl 
-                text-sm font-medium transition-all duration-200 group
-                animate-fadeIn animation-delay-${Math.min(
+                text-sm font-medium transition-all duration-500 group
+                animate-slideInLeft animation-delay-${Math.min(
                   (index + 2) * 100,
-                  600
+                  800
                 )}
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] scale-105"
-                    : "text-gray-300 hover:bg-white/5 hover:text-white hover:scale-105"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)] scale-105"
+                    : "text-gray-300 hover:bg-white/5 hover:text-white hover-lift"
                 }`
               }
             >
@@ -145,17 +145,23 @@ export default function Sidebar({ sidebar, setSidebar }) {
                 <>
                   <div className="flex items-center gap-3">
                     <div
-                      className={`p-1.5 rounded-lg transition-transform ${
+                      className={`p-1.5 rounded-lg transition-all duration-500 ${
                         isActive ? "bg-white/20" : "bg-white/5"
-                      } group-hover:scale-110`}
+                      } group-hover:scale-110 group-hover:rotate-6`}
                     >
                       <Icon
-                        className={`w-4 h-4 ${isActive ? "text-white" : color}`}
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          isActive ? "text-white" : color
+                        }`}
                       />
                     </div>
-                    <span>{label}</span>
+                    <span className="transition-transform duration-300 group-hover:translate-x-1">
+                      {label}
+                    </span>
                   </div>
-                  {isActive && <ChevronRight className="w-4 h-4" />}
+                  {isActive && (
+                    <ChevronRight className="w-4 h-4 animate-float" />
+                  )}
                 </>
               )}
             </NavLink>
@@ -164,7 +170,7 @@ export default function Sidebar({ sidebar, setSidebar }) {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-white/10 bg-[#0A0A0F]">
+      <div className="border-t border-white/10 bg-[#0A0A0F] animate-slideUp animation-delay-900">
         <div className="p-4">
           <div
             onClick={() => {
@@ -172,25 +178,27 @@ export default function Sidebar({ sidebar, setSidebar }) {
               setSidebar(false);
             }}
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 
-            cursor-pointer transition-all group"
+            cursor-pointer transition-all duration-500 group hover-lift"
           >
             <img
               src={user.imageUrl}
               alt={user.fullName}
-              className="w-10 h-10 rounded-full ring-2 ring-white/10 group-hover:ring-purple-500/30 transition-all"
+              className="w-10 h-10 rounded-full ring-2 ring-white/10 group-hover:ring-purple-500/30 transition-all duration-500 group-hover:scale-110"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
+              <p className="text-sm font-medium text-white truncate transition-transform duration-300 group-hover:translate-x-1">
                 {user.fullName}
               </p>
-              <p className="text-xs text-gray-400">View Profile</p>
+              <p className="text-xs text-gray-400 transition-colors duration-300 group-hover:text-purple-400">
+                View Profile
+              </p>
             </div>
             <LogOut
               onClick={(e) => {
                 e.stopPropagation();
                 signOut();
               }}
-              className="w-5 h-5 text-gray-400 hover:text-red-400 transition-colors"
+              className="w-5 h-5 text-gray-400 hover:text-red-400 transition-all duration-300 hover:rotate-12"
             />
           </div>
         </div>

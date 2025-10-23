@@ -7,8 +7,6 @@ import Plan from "../components/Plan";
 import Footer from "../components/Footer";
 
 const Home = () => {
-  console.log("Home component rendering...");
-
   return (
     <div className="bg-[#0A0A0F]">
       <Navbar />

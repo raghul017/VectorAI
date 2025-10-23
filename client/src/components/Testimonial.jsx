@@ -33,7 +33,10 @@ const Testimonial = () => {
   ];
 
   return (
-    <div id="testimonials" className="relative px-4 sm:px-20 xl:px-32 py-32 bg-[#0A0A0F] overflow-hidden">
+    <div
+      id="testimonials"
+      className="relative px-4 sm:px-20 xl:px-32 py-32 bg-[#0A0A0F] overflow-hidden"
+    >
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
@@ -58,61 +61,64 @@ const Testimonial = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {dummyTestimonialData.map((testimonial, index) => (
-            <div
-              key={index}
-              className="relative p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 
-              hover:bg-white/10 hover:border-pink-500/30 transition-all duration-300
-              hover:shadow-[0_0_30px_rgba(236,72,153,0.2)] hover:-translate-y-1"
-            >
-              {/* Quote Icon */}
+          {dummyTestimonialData.map((testimonial, index) => {
+            const delay = `animation-delay-${Math.min((index + 1) * 200, 600)}`;
+            return (
               <div
-                className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 
-              rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(236,72,153,0.5)]"
+                key={index}
+                className={`relative p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 
+              hover:bg-white/10 hover:border-pink-500/30 transition-all duration-500
+              hover:shadow-[0_0_40px_rgba(236,72,153,0.2)] hover-lift animate-slideUp ${delay}`}
               >
-                <Quote className="w-6 h-6 text-white" />
-              </div>
+                {/* Quote Icon */}
+                <div
+                  className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 
+              rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(236,72,153,0.5)]"
+                >
+                  <Quote className="w-6 h-6 text-white" />
+                </div>
 
-              {/* Stars */}
-              <div className="flex items-center gap-1 mb-6 mt-2">
-                {Array(5)
-                  .fill(0)
-                  .map((_, i) => (
-                    <img
-                      key={i}
-                      src={
-                        i < testimonial.rating
-                          ? assets.star_icon
-                          : assets.star_dull_icon
-                      }
-                      alt="star"
-                      className="w-5 h-5"
-                    />
-                  ))}
-              </div>
+                {/* Stars */}
+                <div className="flex items-center gap-1 mb-6 mt-2">
+                  {Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                      <img
+                        key={i}
+                        src={
+                          i < testimonial.rating
+                            ? assets.star_icon
+                            : assets.star_dull_icon
+                        }
+                        alt="star"
+                        className="w-5 h-5"
+                      />
+                    ))}
+                </div>
 
-              {/* Content */}
-              <p className="text-gray-300 text-base leading-relaxed mb-8">
-                "{testimonial.content}"
-              </p>
+                {/* Content */}
+                <p className="text-gray-300 text-base leading-relaxed mb-8">
+                  "{testimonial.content}"
+                </p>
 
-              {/* Divider */}
-              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
 
-              {/* Author */}
-              <div className="flex items-center gap-4">
-                <img
-                  src={testimonial.image}
-                  className="w-14 h-14 object-cover rounded-full ring-2 ring-pink-500/30"
-                  alt={testimonial.name}
-                />
-                <div>
-                  <h3 className="font-bold text-white">{testimonial.name}</h3>
-                  <p className="text-sm text-gray-400">{testimonial.title}</p>
+                {/* Author */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonial.image}
+                    className="w-14 h-14 object-cover rounded-full ring-2 ring-pink-500/30 group-hover:scale-110 transition-transform duration-500"
+                    alt={testimonial.name}
+                  />
+                  <div>
+                    <h3 className="font-bold text-white">{testimonial.name}</h3>
+                    <p className="text-sm text-gray-400">{testimonial.title}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
