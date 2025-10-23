@@ -28,6 +28,13 @@ export const generateArticle = async (req, res) => {
       });
     }
 
+    if (prompt.length > 5000) {
+      return res.json({
+        success: false,
+        message: "Prompt is too long. Maximum 5000 characters allowed.",
+      });
+    }
+
     // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
