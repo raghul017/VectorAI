@@ -27,14 +27,16 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use(clerkMiddleware());
 
-app.get("/", (req, res) => res.send("API Server is running! ✅"));
+app.get("/", (req, res) => res.send("🚀 VectorAI API Server v1.1 - Running Successfully!"));
 
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     status: "healthy",
+    version: "1.1.0",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "production",
+    uptime: process.uptime(),
   });
 });
 
