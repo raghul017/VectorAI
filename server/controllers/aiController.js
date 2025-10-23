@@ -88,6 +88,31 @@ export const generateImage = async (req, res) => {
       });
     }
 
+    // Check daily rate limit (15 images per day)
+    const DAILY_LIMIT = 15;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+
+    const todayCount = await sql`
+      SELECT COUNT(*) as count 
+      FROM creations 
+      WHERE user_id = ${userId} 
+      AND type = 'image' 
+      AND created_at >= ${today.toISOString()}
+    `;
+
+    const currentCount = parseInt(todayCount[0].count);
+    console.log(
+      `User ${userId} has generated ${currentCount}/${DAILY_LIMIT} images today`
+    );
+
+    if (currentCount >= DAILY_LIMIT) {
+      return res.json({
+        success: false,
+        message: `Daily limit reached! You can generate up to ${DAILY_LIMIT} images per day. Your limit will reset tomorrow.`,
+      });
+    }
+
     console.log("Generating image with prompt:", prompt);
     console.log(
       "Using Hugging Face API Key:",
