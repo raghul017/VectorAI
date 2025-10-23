@@ -88,43 +88,46 @@ const Community = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {creations.map((creation, index) => {
-              const animationDelay = `animation-delay-${Math.min((index % 6) * 100, 500)}`;
+              const animationDelay = `animation-delay-${Math.min(
+                (index % 6) * 100,
+                500
+              )}`;
               return (
-              <div
-                key={index}
-                className={`relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transform hover:scale-105 animate-scaleIn ${animationDelay}`}
-              >
-                <img
-                  src={creation.content}
-                  alt={creation.prompt}
-                  className="w-full aspect-square object-cover"
-                />
+                <div
+                  key={index}
+                  className={`relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transform hover:scale-105 animate-scaleIn ${animationDelay}`}
+                >
+                  <img
+                    src={creation.content}
+                    alt={creation.prompt}
+                    className="w-full aspect-square object-cover"
+                  />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                  <p className="text-white text-sm font-medium mb-2 line-clamp-2">
-                    {creation.prompt}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-gray-300 text-xs">
-                      by {creation.user_name || user.fullName}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                    <p className="text-white text-sm font-medium mb-2 line-clamp-2">
+                      {creation.prompt}
                     </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white text-sm font-semibold">
-                        {creation.likes.length}
-                      </span>
-                      <Heart
-                        onClick={() => imageLikeToggle(creation.id)}
-                        className={`w-5 h-5 hover:scale-110 cursor-pointer transition-transform ${
-                          creation.likes.includes(user.id)
-                            ? "fill-red-500 text-red-500"
-                            : "text-white hover:text-red-400"
-                        }`}
-                      />
+                    <div className="flex items-center justify-between">
+                      <p className="text-gray-300 text-xs">
+                        by {creation.user_name || user.fullName}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-sm font-semibold">
+                          {creation.likes.length}
+                        </span>
+                        <Heart
+                          onClick={() => imageLikeToggle(creation.id)}
+                          className={`w-5 h-5 hover:scale-110 cursor-pointer transition-transform ${
+                            creation.likes.includes(user.id)
+                              ? "fill-red-500 text-red-500"
+                              : "text-white hover:text-red-400"
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
+              );
             })}
           </div>
         )}

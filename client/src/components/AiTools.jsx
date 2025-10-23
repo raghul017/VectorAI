@@ -8,7 +8,7 @@ const AiTools = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   return (
-    <div className="relative px-4 sm:px-20 xl:px-32 py-32 bg-[#0A0A0F] overflow-hidden">
+    <div id="work" className="relative px-4 sm:px-20 xl:px-32 py-32 bg-[#0A0A0F] overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 

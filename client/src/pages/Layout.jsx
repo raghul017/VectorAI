@@ -14,9 +14,11 @@ const Layout = () => {
     <div className="flex flex-col items-start justify-start h-screen bg-[#0A0A0F]">
       {/* Floating Glassmorphic Navbar */}
       <div className="w-full px-4 sm:px-8 pt-4 fixed top-0 z-50">
-        <nav className="max-w-7xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between 
+        <nav
+          className="max-w-7xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between 
         bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl
-        shadow-[0_8px_32px_rgba(0,0,0,0.4)] animate-slideDown">
+        shadow-[0_8px_32px_rgba(0,0,0,0.4)] animate-slideDown"
+        >
           <img
             className="cursor-pointer w-32 sm:w-44 brightness-200 contrast-125 saturate-150 
             hover:scale-105 transition-transform duration-300"
@@ -39,7 +41,7 @@ const Layout = () => {
           )}
         </nav>
       </div>
-      
+
       {/* Main Content with top padding for floating navbar */}
       <div className="flex-1 w-full flex h-screen pt-20">
         <Sidebar sidebar={sidebar} setSidebar={setSidebar} />

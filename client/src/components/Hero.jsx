@@ -6,7 +6,7 @@ import { Sparkles, ArrowRight, Star } from "lucide-react";
 const Hero = () => {
   const navigate = useNavigate();
   return (
-    <div className="relative flex flex-col justify-center items-center w-full px-4 sm:px-20 xl:px-32 min-h-screen bg-[#0A0A0F] overflow-hidden">
+    <div id="home" className="relative flex flex-col justify-center items-center w-full px-4 sm:px-20 xl:px-32 min-h-screen bg-[#0A0A0F] overflow-hidden pt-20">
       {/* Animated Gradient Orb Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">

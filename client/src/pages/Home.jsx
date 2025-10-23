@@ -10,14 +10,14 @@ const Home = () => {
   console.log("Home component rendering...");
 
   return (
-    <>
+    <div className="bg-[#0A0A0F]">
       <Navbar />
       <Hero />
       <AiTools />
       <Testimonial />
       <Plan />
       <Footer />
-    </>
+    </div>
   );
 };
 

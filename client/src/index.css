@@ -7,6 +7,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px; /* Account for fixed navbar */
+}
+
 @theme {
   --color-primary: #5044e5;
 }
