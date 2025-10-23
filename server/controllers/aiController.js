@@ -88,26 +88,39 @@ export const generateImage = async (req, res) => {
       });
     }
 
+    console.log("Generating image with prompt:", prompt);
+
     // All features are free - everyone can generate images
     // Using Hugging Face Inference API (FREE!)
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1";
+      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
 
-    const { data } = await axios.post(
+    const response = await axios.post(
       HF_API_URL,
       { inputs: prompt },
       {
         headers: {
           Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-          "Content-Type": "application/json",
         },
         responseType: "arraybuffer",
       }
     );
 
+    // Check if model is loading
+    if (response.headers['content-type']?.includes('application/json')) {
+      const jsonResponse = JSON.parse(Buffer.from(response.data).toString());
+      if (jsonResponse.error) {
+        console.error("Hugging Face API error:", jsonResponse);
+        return res.json({
+          success: false,
+          message: jsonResponse.error || "Model is loading, please try again in 20 seconds",
+        });
+      }
+    }
+
     // Convert raw bytes to base64 data URI
     const base64Image = `data:image/png;base64,${Buffer.from(
-      data,
+      response.data,
       "binary"
     ).toString("base64")}`;
 
@@ -120,9 +133,25 @@ export const generateImage = async (req, res) => {
       VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})
     `;
 
+    console.log("Image generated successfully:", secure_url);
     res.json({ success: true, content: secure_url });
   } catch (err) {
-    console.error("Error in generateImage:", err);
+    console.error("Error in generateImage:", err.response?.data || err.message);
+    
+    // Handle specific errors
+    if (err.response?.status === 404) {
+      return res.json({
+        success: false,
+        message: "Image generation model is not available. Please try again in a moment.",
+      });
+    }
+    
+    if (err.response?.status === 503) {
+      return res.json({
+        success: false,
+        message: "Model is loading. Please wait 20 seconds and try again.",
+      });
+    }
     res.json({ success: false, message: err.message });
   }
 };
