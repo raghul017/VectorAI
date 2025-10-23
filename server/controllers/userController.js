@@ -3,35 +3,31 @@ import sql from "../configs/db.js";
 export const getUserCreations = async (req, res) => {
   try {
     const { userId } = req.auth();
-    
+
     const creations = await sql`
       SELECT * FROM creations WHERE user_id = ${userId} ORDER BY created_at DESC
     `;
 
     res.json({ success: true, creations });
   } catch (err) {
-
     res.json({ success: false, message: err.message });
   }
-}
+};
 
 export const getPublishedCreations = async (req, res) => {
   try {
-
     const creations = await sql`
       SELECT * FROM creations WHERE publish =true ORDER BY created_at DESC
     `;
 
     res.json({ success: true, creations });
   } catch (err) {
-
     res.json({ success: false, message: err.message });
   }
-}
+};
 
 export const toggleLikeCreation = async (req, res) => {
   try {
-
     const { userId } = req.auth();
     const { id } = req.body;
 
@@ -43,12 +39,12 @@ export const toggleLikeCreation = async (req, res) => {
       return res.json({ success: false, message: "Creation not found" });
     }
 
-    const currentLikes = creation.likes ;
+    const currentLikes = creation.likes;
     const userIdStr = userId.toString();
     let updatedLikes;
     let message;
 
-    if(currentLikes.includes(userIdStr)) {
+    if (currentLikes.includes(userIdStr)) {
       // User already liked, remove like
       updatedLikes = currentLikes.filter((user) => user !== userIdStr);
       message = "Creation Unliked";
@@ -60,14 +56,55 @@ export const toggleLikeCreation = async (req, res) => {
 
     const formattedArray = `{${updatedLikes.join(",")}}`;
 
-
     await sql`
       UPDATE creations SET likes = ${formattedArray}::text[] WHERE id = ${id}
     `;
 
     res.json({ success: true, message });
   } catch (err) {
-
     res.json({ success: false, message: err.message });
   }
-}
+};
+
+export const deleteCreation = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const { id } = req.params;
+
+    // Check if creation exists and belongs to user
+    const [creation] = await sql`
+      SELECT * FROM creations WHERE id = ${id} AND user_id = ${userId}
+    `;
+
+    if (!creation) {
+      return res.json({
+        success: false,
+        message: "Creation not found or unauthorized",
+      });
+    }
+
+    // Delete the creation
+    await sql`
+      DELETE FROM creations WHERE id = ${id} AND user_id = ${userId}
+    `;
+
+    res.json({ success: true, message: "Creation deleted successfully" });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+};
+
+export const clearAllCreations = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+
+    // Delete all creations for the user
+    await sql`
+      DELETE FROM creations WHERE user_id = ${userId}
+    `;
+
+    res.json({ success: true, message: "All creations cleared successfully" });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+};

@@ -72,7 +72,8 @@ const BlogTitles = () => {
             </h1>
           </div>
           <p className="text-gray-600 text-sm lg:text-base">
-            Generate catchy, SEO-friendly blog titles that grab attention and drive clicks. Perfect for content creators and marketers.
+            Generate catchy, SEO-friendly blog titles that grab attention and
+            drive clicks. Perfect for content creators and marketers.
           </p>
         </div>
 
@@ -199,7 +200,8 @@ const BlogTitles = () => {
                         Need title ideas?
                       </h3>
                       <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                        Enter your keyword and category to get creative, engaging titles for your blog posts
+                        Enter your keyword and category to get creative,
+                        engaging titles for your blog posts
                       </p>
                     </div>
                   </div>

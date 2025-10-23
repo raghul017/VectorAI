@@ -95,7 +95,8 @@ const GenerateImages = () => {
             </h1>
           </div>
           <p className="text-gray-600 text-sm lg:text-base">
-            Create stunning images with advanced AI technology. Choose your style and let our AI bring your imagination to life.
+            Create stunning images with advanced AI technology. Choose your
+            style and let our AI bring your imagination to life.
           </p>
         </div>
 
@@ -243,7 +244,8 @@ const GenerateImages = () => {
                       Ready to create?
                     </h3>
                     <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                      Describe your vision, choose a style, and let our AI transform your words into stunning visuals
+                      Describe your vision, choose a style, and let our AI
+                      transform your words into stunning visuals
                     </p>
                   </div>
                 </div>

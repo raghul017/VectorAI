@@ -67,7 +67,8 @@ const WriteArticle = () => {
             </h1>
           </div>
           <p className="text-gray-600 text-sm lg:text-base">
-            Generate high-quality, SEO-optimized articles in seconds. Perfect for blogs, websites, and content marketing.
+            Generate high-quality, SEO-optimized articles in seconds. Perfect
+            for blogs, websites, and content marketing.
           </p>
         </div>
 
@@ -121,7 +122,13 @@ const WriteArticle = () => {
                       key={index}
                     >
                       <div className="font-semibold text-sm">{item.text}</div>
-                      <div className={`text-xs mt-1 ${selectedLength.text === item.text ? "text-blue-100" : "text-gray-500"}`}>
+                      <div
+                        className={`text-xs mt-1 ${
+                          selectedLength.text === item.text
+                            ? "text-blue-100"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {item.desc}
                       </div>
                     </button>
@@ -196,7 +203,8 @@ const WriteArticle = () => {
                         Ready to write?
                       </h3>
                       <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                        Enter your topic, choose length, and let AI create engaging content for you
+                        Enter your topic, choose length, and let AI create
+                        engaging content for you
                       </p>
                     </div>
                   </div>
