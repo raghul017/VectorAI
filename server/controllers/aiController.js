@@ -89,11 +89,14 @@ export const generateImage = async (req, res) => {
     }
 
     console.log("Generating image with prompt:", prompt);
-    console.log("Using Hugging Face API Key:", process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "...");
+    console.log(
+      "Using Hugging Face API Key:",
+      process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
+    );
 
-    // Using a simpler, more reliable model for free tier
+    // Using FLUX.1-schnell - fast and free, no license acceptance needed
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4";
+      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
 
     const response = await axios.post(
       HF_API_URL,
@@ -115,11 +118,11 @@ export const generateImage = async (req, res) => {
     if (response.headers["content-type"]?.includes("application/json")) {
       const jsonResponse = JSON.parse(Buffer.from(response.data).toString());
       console.error("API returned JSON (error):", jsonResponse);
-      
+
       if (jsonResponse.error) {
         return res.json({
           success: false,
-          message: jsonResponse.error.includes("loading") 
+          message: jsonResponse.error.includes("loading")
             ? "Model is loading. Please wait 20 seconds and try again."
             : jsonResponse.error,
         });
@@ -153,12 +156,12 @@ export const generateImage = async (req, res) => {
 
     // Try to parse error response
     let errorMessage = "Failed to generate image. Please try again.";
-    
+
     if (err.response?.data) {
       try {
         const errorText = Buffer.from(err.response.data).toString();
         console.error("Error Response:", errorText);
-        
+
         // Try to parse as JSON
         try {
           const errorData = JSON.parse(errorText);
