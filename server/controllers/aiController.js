@@ -105,6 +105,7 @@ export const generateImage = async (req, res) => {
         headers: {
           Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
           "Content-Type": "application/json",
+          Accept: "image/png", // Specify we want image output
         },
         responseType: "arraybuffer",
         timeout: 90000, // 90 second timeout
