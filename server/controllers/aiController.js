@@ -89,47 +89,53 @@ export const generateImage = async (req, res) => {
     }
 
     console.log("Generating image with prompt:", prompt);
+    console.log("Using Hugging Face API Key:", process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "...");
 
-    // All features are free - everyone can generate images
-    // Using Stable Diffusion XL Base - Works great with free Hugging Face API!
+    // Using a simpler, more reliable model for free tier
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+      "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4";
 
     const response = await axios.post(
       HF_API_URL,
-      {
-        inputs: prompt,
-        options: { wait_for_model: true },
-      },
+      { inputs: prompt },
       {
         headers: {
           Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          "Content-Type": "application/json",
         },
         responseType: "arraybuffer",
-        timeout: 60000, // 60 second timeout
+        timeout: 90000, // 90 second timeout
       }
     );
 
-    // Check if model is loading
+    console.log("Response status:", response.status);
+    console.log("Response content-type:", response.headers["content-type"]);
+
+    // Check if response is an error message (JSON)
     if (response.headers["content-type"]?.includes("application/json")) {
       const jsonResponse = JSON.parse(Buffer.from(response.data).toString());
+      console.error("API returned JSON (error):", jsonResponse);
+      
       if (jsonResponse.error) {
-        console.error("Hugging Face API error:", jsonResponse);
         return res.json({
           success: false,
-          message: "Model is loading, please wait 30 seconds and try again.",
+          message: jsonResponse.error.includes("loading") 
+            ? "Model is loading. Please wait 20 seconds and try again."
+            : jsonResponse.error,
         });
       }
     }
 
     // Convert raw bytes to base64 data URI
     const base64Image = `data:image/png;base64,${Buffer.from(
-      response.data,
-      "binary"
+      response.data
     ).toString("base64")}`;
+
+    console.log("Image converted to base64, uploading to Cloudinary...");
 
     // Upload to Cloudinary
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
+    console.log("Uploaded to Cloudinary:", secure_url);
 
     // Persist to database
     await sql`
@@ -137,46 +143,63 @@ export const generateImage = async (req, res) => {
       VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})
     `;
 
-    console.log("Image generated successfully:", secure_url);
+    console.log("Image generation completed successfully!");
     res.json({ success: true, content: secure_url });
   } catch (err) {
-    console.error("Error in generateImage:", err.response?.data || err.message);
+    console.error("=== ERROR IN IMAGE GENERATION ===");
+    console.error("Status:", err.response?.status);
+    console.error("Status Text:", err.response?.statusText);
+    console.error("Error Message:", err.message);
 
-    // Parse error if it's JSON
+    // Try to parse error response
     let errorMessage = "Failed to generate image. Please try again.";
-
+    
     if (err.response?.data) {
       try {
-        const errorData = JSON.parse(Buffer.from(err.response.data).toString());
-        if (errorData.error) {
-          errorMessage = errorData.error;
+        const errorText = Buffer.from(err.response.data).toString();
+        console.error("Error Response:", errorText);
+        
+        // Try to parse as JSON
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // Not JSON, use raw text
+          errorMessage = errorText.substring(0, 200);
         }
       } catch (parseErr) {
-        // Not JSON, use default message
+        console.error("Could not parse error response");
       }
     }
 
-    // Handle specific errors
+    // Handle specific status codes
+    if (err.response?.status === 400) {
+      return res.json({
+        success: false,
+        message: "Invalid request. " + errorMessage,
+      });
+    }
+
     if (err.response?.status === 404) {
       return res.json({
         success: false,
-        message:
-          "Image generation model is not available. Please try again in a moment.",
+        message: "Model not found. Please try again.",
       });
     }
 
     if (err.response?.status === 503) {
       return res.json({
         success: false,
-        message: "Model is warming up. Please wait 30 seconds and try again.",
+        message: "Model is loading. Please wait 30 seconds and try again.",
       });
     }
 
     if (err.response?.status === 401 || err.response?.status === 403) {
       return res.json({
         success: false,
-        message:
-          "Authentication failed. Please check your Hugging Face API key.",
+        message: "Authentication failed. API key may be invalid.",
       });
     }
 
