@@ -15,14 +15,14 @@ const CreationItem = ({ item, onDelete }) => {
   const getTypeColor = (type) => {
     switch (type) {
       case "image":
-        return "bg-emerald-50 border-emerald-200 text-emerald-700";
+        return "bg-emerald-500/20 border-emerald-500/30 text-emerald-300";
       case "article":
       case "resume":
-        return "bg-blue-50 border-blue-200 text-blue-700";
+        return "bg-blue-500/20 border-blue-500/30 text-blue-300";
       case "blog":
-        return "bg-purple-50 border-purple-200 text-purple-700";
+        return "bg-purple-500/20 border-purple-500/30 text-purple-300";
       default:
-        return "bg-gray-50 border-gray-200 text-gray-700";
+        return "bg-gray-500/20 border-gray-500/30 text-gray-300";
     }
   };
 
@@ -50,7 +50,7 @@ const CreationItem = ({ item, onDelete }) => {
   return (
     <div
       onClick={() => setExpanded(!expanded)}
-      className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all cursor-pointer overflow-hidden"
+      className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all cursor-pointer overflow-hidden"
     >
       <div className="p-5 flex items-center justify-between gap-4">
         <div className="flex items-start gap-4 flex-1 min-w-0">
@@ -65,10 +65,10 @@ const CreationItem = ({ item, onDelete }) => {
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h2 className="font-semibold text-gray-900 mb-2 truncate">
+            <h2 className="font-semibold text-white mb-2 truncate">
               {item.prompt}
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-400">
               {new Date(item.created_at).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -95,7 +95,7 @@ const CreationItem = ({ item, onDelete }) => {
           {/* Delete Button */}
           <button
             onClick={handleDelete}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
             title="Delete creation"
           >
             <Trash2 className="w-5 h-5" />
@@ -105,7 +105,7 @@ const CreationItem = ({ item, onDelete }) => {
 
       {/* Expanded Content */}
       {expanded && (
-        <div className="px-5 pb-5 border-t border-gray-100 pt-4 bg-gray-50/50">
+        <div className="px-5 pb-5 border-t border-white/10 pt-4 bg-black/20">
           {item.type === "image" ? (
             <div className="flex justify-center">
               <img
@@ -115,7 +115,7 @@ const CreationItem = ({ item, onDelete }) => {
               />
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none text-gray-700">
+            <div className="prose prose-sm prose-invert max-w-none text-gray-300">
               <Markdown>{item.content}</Markdown>
             </div>
           )}

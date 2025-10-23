@@ -54,19 +54,22 @@ const WriteArticle = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)]">
               <FileText className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
               AI Article Writer
             </h1>
           </div>
-          <p className="text-gray-600 text-sm lg:text-base">
+          <p className="text-gray-400 text-sm lg:text-base">
             Generate high-quality, SEO-optimized articles in seconds. Perfect
             for blogs, websites, and content marketing.
           </p>
@@ -76,9 +79,9 @@ const WriteArticle = () => {
           {/* Left column - Input Form */}
           <form
             onSubmit={onSubmitHandler}
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden h-fit"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden h-fit"
           >
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
                 Article Configuration
@@ -88,16 +91,16 @@ const WriteArticle = () => {
             <div className="p-6 space-y-6">
               {/* Topic Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Article Topic
                 </label>
                 <input
                   onChange={(e) => setInput(e.target.value)}
                   value={input}
                   type="text"
-                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-gray-200 
-                  focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition-all
-                  bg-gray-50 focus:bg-white"
+                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-white/10 
+                  focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition-all
+                  bg-white/5 focus:bg-white/10 text-white placeholder:text-gray-500"
                   placeholder="e.g., The Impact of AI on Modern Healthcare"
                   required
                   maxLength={5000}
@@ -106,7 +109,7 @@ const WriteArticle = () => {
 
               {/* Length Selection */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-white mb-3">
                   Article Length
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -116,8 +119,8 @@ const WriteArticle = () => {
                       onClick={() => setSelectedLength(item)}
                       className={`p-4 text-center rounded-xl border-2 transition-all ${
                         selectedLength.text === item.text
-                          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-500 shadow-lg scale-105"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)] scale-105"
+                          : "bg-white/5 text-gray-300 border-white/10 hover:border-purple-500/30 hover:bg-white/10"
                       }`}
                       key={index}
                     >
@@ -125,7 +128,7 @@ const WriteArticle = () => {
                       <div
                         className={`text-xs mt-1 ${
                           selectedLength.text === item.text
-                            ? "text-blue-100"
+                            ? "text-purple-100"
                             : "text-gray-500"
                         }`}
                       >
@@ -141,9 +144,9 @@ const WriteArticle = () => {
                 disabled={loading}
                 type="submit"
                 className="w-full flex justify-center items-center gap-3 
-                bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700
+                bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500
                 text-white px-6 py-4 rounded-xl font-semibold text-sm
-                shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]
+                shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all transform hover:scale-[1.02] active:scale-[0.98]
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
@@ -162,8 +165,8 @@ const WriteArticle = () => {
           </form>
 
           {/* Right column - Result */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <FileText className="w-5 h-5" />
@@ -195,14 +198,14 @@ const WriteArticle = () => {
               {!content ? (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-                      <FileText className="w-10 h-10 text-blue-600" />
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center">
+                      <FileText className="w-10 h-10 text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                      <h3 className="text-lg font-semibold text-white mb-2">
                         Ready to write?
                       </h3>
-                      <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                      <p className="text-sm text-gray-400 max-w-sm mx-auto">
                         Enter your topic, choose length, and let AI create
                         engaging content for you
                       </p>
@@ -210,7 +213,7 @@ const WriteArticle = () => {
                   </div>
                 </div>
               ) : (
-                <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600">
+                <div className="prose prose-sm prose-invert max-w-none">
                   <Markdown>{content}</Markdown>
                 </div>
               )}

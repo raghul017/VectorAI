@@ -57,9 +57,12 @@ const Community = () => {
   }, [user]);
 
   return !loading ? (
-    <div className="flex-1 h-full flex flex-col gap-4 p-6">
-      Creations
-      <div className="bg-white h-full w-full rounded-xl overflow-y-scroll">
+    <div className="flex-1 h-full flex flex-col gap-4 p-6 bg-[#0A0A0F]">
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+      
+      <h2 className="relative z-10 text-2xl font-bold text-white">Community Creations</h2>
+      <div className="relative z-10 bg-white/5 backdrop-blur-sm border border-white/10 h-full w-full rounded-2xl overflow-y-scroll p-4">
         {creations.map((creation, index) => (
           <div
             key={index}

@@ -74,10 +74,10 @@ export default function Sidebar({ sidebar, setSidebar }) {
   return (
     <div
       className={`
-        w-72 bg-gradient-to-b from-slate-50 to-white border-r border-gray-200 
+        w-72 bg-[#0A0A0F] border-r border-white/10 
         flex flex-col justify-between
         max-sm:absolute top-10 bottom-0 z-50
-        transition-all duration-300 ease-in-out shadow-lg
+        transition-all duration-300 ease-in-out shadow-2xl
         ${sidebar ? "translate-x-0" : "max-sm:-translate-x-full"}
       `}
     >
@@ -85,25 +85,25 @@ export default function Sidebar({ sidebar, setSidebar }) {
       <div className="flex-1 overflow-y-auto py-6">
         {/* User Profile Header */}
         <div className="px-6 mb-6">
-          <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all">
             <img
               src={user.imageUrl}
               alt="User Avatar"
-              className="w-12 h-12 rounded-full ring-2 ring-blue-100"
+              className="w-12 h-12 rounded-full ring-2 ring-purple-500/30"
             />
             <div className="flex-1 min-w-0">
-              <h2 className="text-sm font-semibold text-gray-900 truncate">
+              <h2 className="text-sm font-semibold text-white truncate">
                 {user.fullName}
               </h2>
               <Protect
                 plan="premium"
                 fallback={
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                  <span className="text-xs text-gray-400 flex items-center gap-1">
                     Free Plan
                   </span>
                 }
               >
-                <span className="text-xs text-amber-600 font-medium flex items-center gap-1">
+                <span className="text-xs text-amber-400 font-medium flex items-center gap-1">
                   <Crown className="w-3 h-3" />
                   Premium
                 </span>
@@ -114,7 +114,7 @@ export default function Sidebar({ sidebar, setSidebar }) {
 
         {/* Navigation Items */}
         <div className="px-4 space-y-1">
-          <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+          <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
             Tools
           </p>
           {/* eslint-disable-next-line no-unused-vars */}
@@ -129,8 +129,8 @@ export default function Sidebar({ sidebar, setSidebar }) {
                 text-sm font-medium transition-all duration-200 group
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
-                    : "text-gray-700 hover:bg-white hover:shadow-md"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+                    : "text-gray-300 hover:bg-white/5 hover:text-white"
                 }`
               }
             >
@@ -139,9 +139,7 @@ export default function Sidebar({ sidebar, setSidebar }) {
                   <div className="flex items-center gap-3">
                     <div
                       className={`p-1.5 rounded-lg ${
-                        isActive
-                          ? "bg-white/20"
-                          : "bg-gradient-to-br from-gray-100 to-gray-50"
+                        isActive ? "bg-white/20" : "bg-white/5"
                       }`}
                     >
                       <Icon
@@ -159,33 +157,33 @@ export default function Sidebar({ sidebar, setSidebar }) {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-gray-200 bg-white">
+      <div className="border-t border-white/10 bg-[#0A0A0F]">
         <div className="p-4">
           <div
             onClick={() => {
               openUserProfile();
               setSidebar(false);
             }}
-            className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 
             cursor-pointer transition-all group"
           >
             <img
               src={user.imageUrl}
               alt={user.fullName}
-              className="w-10 h-10 rounded-full ring-2 ring-gray-100 group-hover:ring-blue-200 transition-all"
+              className="w-10 h-10 rounded-full ring-2 ring-white/10 group-hover:ring-purple-500/30 transition-all"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {user.fullName}
               </p>
-              <p className="text-xs text-gray-500">View Profile</p>
+              <p className="text-xs text-gray-400">View Profile</p>
             </div>
             <LogOut
               onClick={(e) => {
                 e.stopPropagation();
                 signOut();
               }}
-              className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors"
+              className="w-5 h-5 text-gray-400 hover:text-red-400 transition-colors"
             />
           </div>
         </div>

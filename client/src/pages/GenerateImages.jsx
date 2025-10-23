@@ -82,28 +82,31 @@ const GenerateImages = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
               AI Image Generator
             </h1>
           </div>
-          <p className="text-gray-600 text-sm lg:text-base">
+          <p className="text-gray-400 text-sm lg:text-base">
             Create stunning images with advanced AI technology. Choose your
             style and let our AI bring your imagination to life.
           </p>
         </div>
 
         {/* Usage Badge */}
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-emerald-100">
-          <Zap className="w-4 h-4 text-emerald-600" />
-          <span className="text-sm font-medium text-gray-700">
+        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-sm rounded-full border border-emerald-500/30">
+          <Zap className="w-4 h-4 text-emerald-400" />
+          <span className="text-sm font-medium text-emerald-300">
             {usage.remaining} of {usage.limit} generations remaining today
           </span>
         </div>

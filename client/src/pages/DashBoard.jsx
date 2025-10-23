@@ -93,14 +93,17 @@ export default function DashBoard() {
   }, []);
 
   return (
-    <div className="h-full overflow-y-scroll bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
             Dashboard
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-400">
             Track your AI-powered creations and manage your content
           </p>
         </div>
@@ -108,21 +111,21 @@ export default function DashBoard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Creations */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)]">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <TrendingUp className="w-5 h-5 text-green-500" />
+              <TrendingUp className="w-5 h-5 text-green-400" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-1">
+            <h3 className="text-2xl font-bold text-white mb-1">
               {creations.length}
             </h3>
-            <p className="text-sm text-gray-600 font-medium">Total Creations</p>
+            <p className="text-sm text-gray-400 font-medium">Total Creations</p>
           </div>
 
           {/* Active Plan */}
-          <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow text-white">
+          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all text-white">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                 <Protect
@@ -142,13 +145,13 @@ export default function DashBoard() {
           </div>
 
           {/* This Week */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-emerald-500/30 transition-all shadow-[0_0_20px_rgba(16,185,129,0.1)]">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-lg">
                 <Activity className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-1">
+            <h3 className="text-2xl font-bold text-white mb-1">
               {
                 creations.filter((c) => {
                   const diff = Date.now() - new Date(c.created_at).getTime();
@@ -156,24 +159,24 @@ export default function DashBoard() {
                 }).length
               }
             </h3>
-            <p className="text-sm text-gray-600 font-medium">This Week</p>
+            <p className="text-sm text-gray-400 font-medium">This Week</p>
           </div>
 
           {/* Clear History Button Card */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-red-500/30 transition-all">
             <div className="flex flex-col items-center justify-center h-full gap-3">
               <button
                 onClick={clearAllHistory}
                 disabled={deleting || creations.length === 0}
                 className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 
                 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-medium text-sm
-                shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed
                 transform hover:scale-105 active:scale-95"
               >
                 <Trash2 className="w-4 h-4" />
                 {deleting ? "Clearing..." : "Clear All History"}
               </button>
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-gray-400 text-center">
                 Remove all your creations
               </p>
             </div>
@@ -184,8 +187,8 @@ export default function DashBoard() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-              <p className="text-gray-600 font-medium">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+              <p className="text-gray-400 font-medium">
                 Loading your creations...
               </p>
             </div>
@@ -193,25 +196,25 @@ export default function DashBoard() {
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-white">
                 Recent Creations
               </h2>
               {creations.length > 0 && (
-                <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium border border-purple-500/30">
                   {creations.length} {creations.length === 1 ? "item" : "items"}
                 </span>
               )}
             </div>
 
             {creations.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
-                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-50 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-10 h-10 text-gray-400" />
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-12 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-white mb-2">
                   No creations yet
                 </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                <p className="text-gray-400 mb-6 max-w-md mx-auto">
                   Start creating amazing content with our AI tools. Your
                   creations will appear here.
                 </p>

@@ -1,47 +1,112 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
+import { Sparkles, ArrowRight, Star } from "lucide-react";
 
 const Hero = () => {
   const navigate = useNavigate();
   return (
-    <div
-      className="
-        flex flex-col justify-center items-center
-        w-full px-4 sm:px-20 xl:px-32
-        min-h-screen
-        bg-[url(/gradientBackground.png)] bg-cover bg-repeat
-      "
-    >
-    
-      <div className="text-center mb-6">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl 2xl:text-7xl font-semibold leading-[1.2]">
-          Create amazing content <br />
-          with <span className="text-primary">AI Tools</span>
+    <div className="relative flex flex-col justify-center items-center w-full px-4 sm:px-20 xl:px-32 min-h-screen bg-[#0A0A0F] overflow-hidden">
+      {/* Animated Gradient Orb Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-blue-500/30 to-cyan-500/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-purple-600/20 to-blue-600/20 rounded-full blur-3xl animate-blob"></div>
+        </div>
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]"></div>
+      </div>
+
+      <div className="relative z-10 text-center mb-12 max-w-5xl">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 mb-8 hover:bg-white/10 transition-all">
+          <Sparkles className="w-4 h-4 text-purple-400" />
+          <span className="text-sm font-medium text-gray-300">
+            AI-Powered Content Creation
+          </span>
+          <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded-full font-semibold">
+            NEW
+          </span>
+        </div>
+
+        {/* Main Heading with Gradient */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.1] mb-6">
+          <span className="text-white">Turn Raw Data into</span>
+          <br />
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            Actionable Insights
+          </span>
+          <span className="text-white"> – Instantly</span>
         </h1>
-        <p className="mt-4 max-w-xs sm:max-w-lg 2xl:max-w-3xl mx-auto">
-          Transform your content creation with our suite of premium AI Tools.
-          Write articles, generate images, and enhance your workflow.
+
+        <p className="mt-6 max-w-2xl mx-auto text-gray-400 text-lg sm:text-xl leading-relaxed">
+          Transform your content creation with our suite of powerful AI tools.
+          Write articles, generate stunning images, and enhance your workflow in
+          seconds.
         </p>
       </div>
 
-
-      <div className="flex flex-wrap justify-center gap-4 text-sm max-sm:text-xs">
+      {/* CTA Buttons */}
+      <div className="relative z-10 flex flex-wrap justify-center gap-4 text-sm sm:text-base mb-16">
         <button
           onClick={() => navigate("/ai")}
-          className="bg-primary text-white px-10 py-3 rounded-lg hover:scale-102 active:scale-95 transition cursor-pointer"
+          className="group flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 
+          hover:from-purple-500 hover:to-pink-500 text-white px-8 py-4 rounded-xl 
+          shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)]
+          transition-all transform hover:scale-105 active:scale-95 font-semibold"
         >
-          Start creating now
-        </button>
-        <button className="bg-white text-primary px-10 py-3 rounded-lg hover:scale-102 active:scale-95 transition cursor-pointer">
-          Watch demo
+          <Sparkles className="w-5 h-5" />
+          Start Creating Now
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 
-      <div className="flex items-center gap-4 mt-8 mx-auto text-gray-600">
-        <img src={assets.user_group} alt="" className="h-8" />Trusted by 10K+ people
-      </div>
+      {/* Stats Section */}
+      <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12">
+        {/* Stat 1 */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+            <img src={assets.user_group} alt="" className="h-8" />
+            <div className="text-left">
+              <p className="text-xs text-gray-400 font-medium">Trusted by</p>
+              <p className="text-sm font-bold text-white">10,000+ Creators</p>
+            </div>
+          </div>
+        </div>
 
+        {/* Stat 2 - Rating */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className="w-4 h-4 text-yellow-400 fill-yellow-400"
+                />
+              ))}
+            </div>
+            <div className="text-left">
+              <p className="text-lg font-bold text-white">4.9/5</p>
+              <p className="text-xs text-gray-400">Verified Reviews</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 3 - Productivity */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+            <div className="text-right">
+              <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                7x
+              </p>
+            </div>
+            <div className="text-left">
+              <p className="text-xs text-gray-400">Faster, Smarter</p>
+              <p className="text-sm font-semibold text-white">Productivity</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

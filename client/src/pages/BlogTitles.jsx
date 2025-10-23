@@ -59,19 +59,22 @@ const BlogTitles = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
+      {/* Grid Pattern Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)]">
               <Lightbulb className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
               AI Blog Title Generator
             </h1>
           </div>
-          <p className="text-gray-600 text-sm lg:text-base">
+          <p className="text-gray-400 text-sm lg:text-base">
             Generate catchy, SEO-friendly blog titles that grab attention and
             drive clicks. Perfect for content creators and marketers.
           </p>
