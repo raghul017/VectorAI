@@ -74,7 +74,7 @@ export const generateBlogTitle = async (req, res) => {
   }
 };
 
-// Image Generation
+// Image Generation using FREE Hugging Face Inference API
 export const generateImage = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -89,15 +89,17 @@ export const generateImage = async (req, res) => {
     }
 
     // All features are free - everyone can generate images
-    // Build the form data
-    const formData = new FormData();
-    formData.append("prompt", prompt);
-
+    // Using Hugging Face Inference API (FREE!)
+    const HF_API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1";
+    
     const { data } = await axios.post(
-      "https://clipdrop-api.co/text-to-image/v1",
-      formData,
+      HF_API_URL,
+      { inputs: prompt },
       {
-        headers: { "x-api-key": process.env.CLIPDROP_API_KEY },
+        headers: { 
+          "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          "Content-Type": "application/json"
+        },
         responseType: "arraybuffer",
       }
     );
