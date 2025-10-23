@@ -94,18 +94,15 @@ export const generateImage = async (req, res) => {
       process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
     );
 
-    // Using Stable Diffusion XL Turbo - Fast, high quality, works immediately!
-    // No gated access needed, fully supported by Inference API
+    // Using Stable Diffusion v2.1 - Fully open, works immediately!
+    // Most reliable model for free Inference API, no restrictions
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/stabilityai/sdxl-turbo";
+      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1";
 
     const response = await axios.post(
       HF_API_URL,
       {
         inputs: prompt,
-        parameters: {
-          num_inference_steps: 2, // SDXL-Turbo optimized for 1-4 steps
-        },
       },
       {
         headers: {
