@@ -1,4 +1,4 @@
-import multer from 'multer';
+import multer from "multer";
 
 // Use memory storage for Vercel serverless functions
 // Files are stored in memory as Buffer objects instead of on disk
@@ -14,11 +14,11 @@ export const upload = multer({
     const allowedTypes = /jpeg|jpg|png|gif|webp|pdf/;
     const extname = allowedTypes.test(file.originalname.toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb(new Error('Only image and PDF files are allowed!'));
+      cb(new Error("Only image and PDF files are allowed!"));
     }
-  }
+  },
 });

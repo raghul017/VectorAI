@@ -316,7 +316,9 @@ export const removeImageBackground = async (req, res) => {
     console.log("Processing image:", image.originalname);
 
     // Convert buffer to base64 for Cloudinary
-    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString(
+      "base64"
+    )}`;
 
     // All features are free - everyone can remove backgrounds
     const { secure_url } = await cloudinary.uploader.upload(base64Image, {
@@ -365,7 +367,9 @@ export const removeImageObject = async (req, res) => {
     }
 
     // Convert buffer to base64 for Cloudinary
-    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString(
+      "base64"
+    )}`;
 
     // All features are free - everyone can remove objects
     const { public_id } = await cloudinary.uploader.upload(base64Image);

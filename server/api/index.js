@@ -25,10 +25,10 @@ app.get("/", (req, res) => res.send("API Server is running! ✅"));
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.json({ 
-    status: "healthy", 
+  res.json({
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "production"
+    environment: process.env.NODE_ENV || "production",
   });
 });
 
@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
-    error: process.env.NODE_ENV === "development" ? err : {}
+    error: process.env.NODE_ENV === "development" ? err : {},
   });
 });
 
@@ -80,7 +80,7 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route not found"
+    message: "Route not found",
   });
 });
 
