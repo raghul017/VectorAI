@@ -94,10 +94,10 @@ export const generateImage = async (req, res) => {
       process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
     );
 
-    // Using Stable Diffusion v2.1 - Fully open, works immediately!
-    // Most reliable model for free Inference API, no restrictions
+    // Using Dreamlike Photoreal 2.0 - Community model, fully open, works perfectly!
+    // No gated access, fully compatible with free Inference API
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1";
+      "https://api-inference.huggingface.co/models/dreamlike-art/dreamlike-photoreal-2.0";
 
     const response = await axios.post(
       HF_API_URL,
