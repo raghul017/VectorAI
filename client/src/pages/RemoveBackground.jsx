@@ -42,7 +42,7 @@ const RemoveBackground = () => {
     <div className="h-full overflow-y-scroll bg-[#0A0A0F] p-6 flex items-start flex-wrap gap-4">
       {/* Grid Pattern Overlay */}
       <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
-      
+
       {/* {left col} */}
       <form
         onSubmit={onSubmitHandler}
@@ -71,8 +71,8 @@ const RemoveBackground = () => {
         <button
           disabled={loading}
           className="w-full flex justify-center items-center gap-2 
-        bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-500 hover:to-red-500 text-white px-6 py-4 mt-6
-        text-sm font-semibold rounded-xl shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:shadow-[0_0_40px_rgba(236,72,153,0.6)] transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+        bg-white/10 hover:bg-white/15 border border-white/20 text-white px-6 py-4 mt-6
+        text-sm font-semibold rounded-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {loading ? (
             <span className="w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin"></span>
@@ -100,7 +100,11 @@ const RemoveBackground = () => {
             </div>
           </div>
         ) : (
-          <img src={content} alt="image" className="mt-3 w-full h-full rounded-xl" />
+          <img
+            src={content}
+            alt="image"
+            className="mt-3 w-full h-full rounded-xl"
+          />
         )}
       </div>
     </div>

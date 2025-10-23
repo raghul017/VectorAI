@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { assets } from "../assets/assets";
-import { useNavigate,Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import { SignIn, useUser } from "@clerk/clerk-react";
@@ -9,7 +9,6 @@ const Layout = () => {
   const navigate = useNavigate();
   const [sidebar, setSidebar] = useState(false);
   const { user } = useUser();
-
 
   return user ? (
     <div className="flex flex-col items-start justify-start h-screen bg-[#0A0A0F]">
@@ -39,11 +38,11 @@ const Layout = () => {
         </div>
       </div>
     </div>
-  ): ( 
+  ) : (
     <div className="flex items-center justify-center h-screen bg-[#0A0A0F]">
-      <SignIn/>
+      <SignIn />
     </div>
-  )
+  );
 };
 
 export default Layout;

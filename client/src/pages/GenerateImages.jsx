@@ -90,10 +90,10 @@ const GenerateImages = () => {
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+              <Sparkles className="w-6 h-6 text-emerald-400" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white">
               AI Image Generator
             </h1>
           </div>
@@ -104,7 +104,7 @@ const GenerateImages = () => {
         </div>
 
         {/* Usage Badge */}
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-sm rounded-full border border-emerald-500/30">
+        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-500/20">
           <Zap className="w-4 h-4 text-emerald-400" />
           <span className="text-sm font-medium text-emerald-300">
             {usage.remaining} of {usage.limit} generations remaining today
@@ -115,9 +115,9 @@ const GenerateImages = () => {
           {/* Left column - Input Form */}
           <form
             onSubmit={onSubmitHandler}
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6">
+            <div className="p-6 border-b border-white/10">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Image className="w-5 h-5" />
                 Create Your Image
@@ -127,28 +127,28 @@ const GenerateImages = () => {
             <div className="p-6 space-y-6">
               {/* Prompt Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Describe Your Vision
                 </label>
                 <textarea
                   rows={5}
                   onChange={(e) => setInput(e.target.value)}
                   value={input}
-                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-gray-200 
-                  focus:border-emerald-400 focus:ring-4 focus:ring-emerald-50 transition-all
-                  resize-none bg-gray-50 focus:bg-white"
+                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-white/10 
+                  focus:border-emerald-400/50 focus:ring-4 focus:ring-emerald-400/10 transition-all
+                  resize-none bg-white/5 focus:bg-white/10 text-white placeholder:text-gray-500"
                   placeholder="A serene landscape with mountains at sunset, birds flying in the sky, vibrant colors..."
                   required
                   maxLength={1000}
                 />
-                <div className="mt-1 text-xs text-gray-500 text-right">
+                <div className="mt-1 text-xs text-gray-400 text-right">
                   {input.length}/1000 characters
                 </div>
               </div>
 
               {/* Style Selection */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-white mb-3">
                   Select Style
                 </label>
                 <div className="flex gap-2 flex-wrap">
@@ -156,11 +156,11 @@ const GenerateImages = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedStyle(item)}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all
+                      className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all
                         ${
                           selectedStyle === item
-                            ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg scale-105"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
+                            ? "bg-white/10 text-white border-emerald-400/50 shadow-[0_0_15px_rgba(52,211,153,0.3)]"
+                            : "bg-white/5 text-gray-300 border-white/10 hover:border-emerald-500/30 hover:bg-white/10"
                         }`}
                       key={item}
                     >
@@ -171,10 +171,10 @@ const GenerateImages = () => {
               </div>
 
               {/* Public Toggle */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
                 <div className="flex items-center gap-3">
-                  <Info className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <Info className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm font-medium text-white">
                     Share with community
                   </span>
                 </div>
@@ -185,7 +185,7 @@ const GenerateImages = () => {
                     onChange={(e) => setPublish(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-emerald-500 transition-all"></div>
+                  <div className="w-11 h-6 bg-white/10 rounded-full peer-checked:bg-emerald-500/50 transition-all border border-white/20"></div>
                   <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-5 shadow-sm"></span>
                 </label>
               </div>
@@ -195,9 +195,9 @@ const GenerateImages = () => {
                 disabled={loading || usage.remaining === 0}
                 type="submit"
                 className="w-full flex justify-center items-center gap-3 
-                bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600
+                bg-white/10 hover:bg-white/15 border border-white/20
                 text-white px-6 py-4 rounded-xl font-semibold text-sm
-                shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]
+                hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-[0.98]
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
@@ -216,8 +216,8 @@ const GenerateImages = () => {
           </form>
 
           {/* Right column - Result */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <Image className="w-5 h-5" />
@@ -226,8 +226,8 @@ const GenerateImages = () => {
                 {content && (
                   <button
                     onClick={downloadImage}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 
-                    text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 
+                    text-white rounded-lg text-sm font-medium transition-all border border-white/20"
                   >
                     <Download className="w-4 h-4" />
                     Download
@@ -239,14 +239,14 @@ const GenerateImages = () => {
             <div className="p-6 min-h-[500px] flex items-center justify-center">
               {!content ? (
                 <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-r from-emerald-100 to-teal-100 rounded-full flex items-center justify-center">
-                    <Image className="w-10 h-10 text-emerald-600" />
+                  <div className="w-20 h-20 mx-auto bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center">
+                    <Image className="w-10 h-10 text-emerald-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                    <h3 className="text-lg font-semibold text-white mb-2">
                       Ready to create?
                     </h3>
-                    <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                    <p className="text-sm text-gray-400 max-w-sm mx-auto">
                       Describe your vision, choose a style, and let our AI
                       transform your words into stunning visuals
                     </p>

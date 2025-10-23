@@ -50,7 +50,7 @@ const RemoveObject = () => {
     <div className="h-full overflow-y-scroll bg-[#0A0A0F] p-6 flex items-start flex-wrap gap-4">
       {/* Grid Pattern Overlay */}
       <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
-      
+
       {/* {left col} */}
       <form
         onSubmit={onSubmitHandler}
@@ -115,7 +115,11 @@ const RemoveObject = () => {
             </div>
           </div>
         ) : (
-          <img src={content} alt="image" className="mt-3 w-full h-full rounded-xl" />
+          <img
+            src={content}
+            alt="image"
+            className="mt-3 w-full h-full rounded-xl"
+          />
         )}
       </div>
     </div>

@@ -84,11 +84,11 @@ const BlogTitles = () => {
           {/* Left column - Input Form */}
           <form
             onSubmit={onSubmitHandler}
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden h-fit"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden h-fit"
           >
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6">
+            <div className="p-6 border-b border-white/10">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-5 h-5 text-purple-400" />
                 Title Configuration
               </h2>
             </div>
@@ -96,16 +96,16 @@ const BlogTitles = () => {
             <div className="p-6 space-y-6">
               {/* Keyword Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Enter Your Keyword or Topic
                 </label>
                 <input
                   onChange={(e) => setInput(e.target.value)}
                   value={input}
                   type="text"
-                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-gray-200 
-                  focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all
-                  bg-gray-50 focus:bg-white"
+                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-white/10 
+                  focus:border-purple-400/50 focus:ring-4 focus:ring-purple-500/20 transition-all
+                  bg-white/5 focus:bg-white/10 text-white placeholder:text-gray-500"
                   placeholder="e.g., Artificial Intelligence, Healthy Eating, Travel Tips..."
                   required
                   maxLength={5000}
@@ -114,7 +114,7 @@ const BlogTitles = () => {
 
               {/* Category Selection */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-white mb-3">
                   Select Category
                 </label>
                 <div className="flex gap-2 flex-wrap">
@@ -125,8 +125,8 @@ const BlogTitles = () => {
                       className={`px-4 py-2 text-sm font-medium rounded-lg transition-all
                         ${
                           selectedCategory === item
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg scale-105"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
+                            ? "bg-white/10 text-white border-2 border-purple-400/50 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10"
                         }`}
                       key={item}
                     >
@@ -141,9 +141,9 @@ const BlogTitles = () => {
                 disabled={loading}
                 type="submit"
                 className="w-full flex justify-center items-center gap-3 
-                bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600
+                bg-white/10 hover:bg-white/15 border border-white/20
                 text-white px-6 py-4 rounded-xl font-semibold text-sm
-                shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]
+                hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-[0.98]
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
@@ -162,18 +162,18 @@ const BlogTitles = () => {
           </form>
 
           {/* Right column - Result */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                  <Hash className="w-5 h-5" />
+                  <Hash className="w-5 h-5 text-purple-400" />
                   Your Titles
                 </h2>
                 {content && (
                   <button
                     onClick={copyToClipboard}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 
-                    text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 
+                    text-white rounded-lg text-sm font-medium transition-all border border-white/10"
                   >
                     {copied ? (
                       <>
@@ -195,14 +195,14 @@ const BlogTitles = () => {
               {!content ? (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
-                      <Lightbulb className="w-10 h-10 text-purple-600" />
+                    <div className="w-20 h-20 mx-auto bg-purple-500/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-purple-500/20">
+                      <Lightbulb className="w-10 h-10 text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                      <h3 className="text-lg font-semibold text-white mb-2">
                         Need title ideas?
                       </h3>
-                      <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                      <p className="text-sm text-gray-400 max-w-sm mx-auto">
                         Enter your keyword and category to get creative,
                         engaging titles for your blog posts
                       </p>
@@ -210,7 +210,7 @@ const BlogTitles = () => {
                   </div>
                 </div>
               ) : (
-                <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700">
+                <div className="prose prose-sm prose-invert max-w-none">
                   <Markdown>{content}</Markdown>
                 </div>
               )}

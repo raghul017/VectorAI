@@ -111,10 +111,10 @@ export default function DashBoard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Creations */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)]">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-purple-400/30 transition-all">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                <Sparkles className="w-6 h-6 text-blue-400" />
               </div>
               <TrendingUp className="w-5 h-5 text-green-400" />
             </div>
@@ -125,14 +125,14 @@ export default function DashBoard() {
           </div>
 
           {/* Active Plan */}
-          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all text-white">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-purple-400/50 p-6 hover:bg-white/10 transition-all text-white shadow-[0_0_20px_rgba(168,85,247,0.15)]">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl">
                 <Protect
                   plan="premium"
-                  fallback={<Gem className="w-6 h-6 text-white" />}
+                  fallback={<Gem className="w-6 h-6 text-purple-400" />}
                 >
-                  <Crown className="w-6 h-6 text-white" />
+                  <Crown className="w-6 h-6 text-purple-400" />
                 </Protect>
               </div>
             </div>
@@ -141,14 +141,14 @@ export default function DashBoard() {
                 Premium
               </Protect>
             </h3>
-            <p className="text-sm text-white/90 font-medium">Active Plan</p>
+            <p className="text-sm text-gray-400 font-medium">Active Plan</p>
           </div>
 
           {/* This Week */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-emerald-500/30 transition-all shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-emerald-400/30 transition-all">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-lg">
-                <Activity className="w-6 h-6 text-white" />
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                <Activity className="w-6 h-6 text-emerald-400" />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-white mb-1">
@@ -163,15 +163,15 @@ export default function DashBoard() {
           </div>
 
           {/* Clear History Button Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-red-500/30 transition-all">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-red-400/30 transition-all">
             <div className="flex flex-col items-center justify-center h-full gap-3">
               <button
                 onClick={clearAllHistory}
                 disabled={deleting || creations.length === 0}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 
-                hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-medium text-sm
-                shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                transform hover:scale-105 active:scale-95"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 
+                hover:bg-white/15 text-white rounded-xl font-medium text-sm border border-white/20
+                hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                transform hover:scale-105 active:scale-95 disabled:hover:scale-100"
               >
                 <Trash2 className="w-4 h-4" />
                 {deleting ? "Clearing..." : "Clear All History"}

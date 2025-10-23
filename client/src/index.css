@@ -48,7 +48,8 @@
 
 /* Gradient animation */
 @keyframes gradient {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -60,4 +61,3 @@
   background-size: 200% auto;
   animation: gradient 3s linear infinite;
 }
-

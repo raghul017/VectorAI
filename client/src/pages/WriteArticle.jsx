@@ -81,9 +81,9 @@ const WriteArticle = () => {
             onSubmit={onSubmitHandler}
             className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden h-fit"
           >
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+            <div className="p-6 border-b border-white/10">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-5 h-5 text-purple-400" />
                 Article Configuration
               </h2>
             </div>
@@ -119,7 +119,7 @@ const WriteArticle = () => {
                       onClick={() => setSelectedLength(item)}
                       className={`p-4 text-center rounded-xl border-2 transition-all ${
                         selectedLength.text === item.text
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)] scale-105"
+                          ? "bg-white/10 text-white border-purple-400/50 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
                           : "bg-white/5 text-gray-300 border-white/10 hover:border-purple-500/30 hover:bg-white/10"
                       }`}
                       key={index}
@@ -128,7 +128,7 @@ const WriteArticle = () => {
                       <div
                         className={`text-xs mt-1 ${
                           selectedLength.text === item.text
-                            ? "text-purple-100"
+                            ? "text-gray-300"
                             : "text-gray-500"
                         }`}
                       >
@@ -144,9 +144,9 @@ const WriteArticle = () => {
                 disabled={loading}
                 type="submit"
                 className="w-full flex justify-center items-center gap-3 
-                bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500
+                bg-white/10 hover:bg-white/15 border border-white/20
                 text-white px-6 py-4 rounded-xl font-semibold text-sm
-                shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all transform hover:scale-[1.02] active:scale-[0.98]
+                hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-[0.98]
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
@@ -166,7 +166,7 @@ const WriteArticle = () => {
 
           {/* Right column - Result */}
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+            <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <FileText className="w-5 h-5" />
@@ -175,8 +175,8 @@ const WriteArticle = () => {
                 {content && (
                   <button
                     onClick={copyToClipboard}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 
-                    text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 
+                    text-white rounded-lg text-sm font-medium transition-all border border-white/20"
                   >
                     {copied ? (
                       <>
@@ -198,7 +198,7 @@ const WriteArticle = () => {
               {!content ? (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center">
+                    <div className="w-20 h-20 mx-auto bg-purple-500/10 border border-purple-500/20 rounded-full flex items-center justify-center">
                       <FileText className="w-10 h-10 text-purple-400" />
                     </div>
                     <div>
