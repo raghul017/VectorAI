@@ -94,18 +94,17 @@ export const generateImage = async (req, res) => {
       process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
     );
 
-    // Using SDXL-Lightning - MUCH better quality, fast generation!
-    // IMPORTANT: SDXL-Lightning REQUIRES guidance_scale=0 (per official docs)
+    // Using Stable Diffusion XL Turbo - Fast, high quality, works immediately!
+    // No gated access needed, fully supported by Inference API
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/ByteDance/SDXL-Lightning";
+      "https://api-inference.huggingface.co/models/stabilityai/sdxl-turbo";
 
     const response = await axios.post(
       HF_API_URL,
       {
         inputs: prompt,
         parameters: {
-          num_inference_steps: 4, // 4-step model
-          guidance_scale: 0, // MUST be 0 for SDXL-Lightning!
+          num_inference_steps: 2, // SDXL-Turbo optimized for 1-4 steps
         },
       },
       {
