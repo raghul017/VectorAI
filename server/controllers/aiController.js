@@ -95,7 +95,7 @@ export const generateImage = async (req, res) => {
     );
 
     // Using SDXL-Lightning - MUCH better quality, fast generation!
-    // Recommended by Hugging Face for high-quality images
+    // IMPORTANT: SDXL-Lightning REQUIRES guidance_scale=0 (per official docs)
     const HF_API_URL =
       "https://api-inference.huggingface.co/models/ByteDance/SDXL-Lightning";
 
@@ -104,10 +104,8 @@ export const generateImage = async (req, res) => {
       {
         inputs: prompt,
         parameters: {
-          num_inference_steps: 4, // SDXL-Lightning works best with 4 steps
-          guidance_scale: 7.5, // Higher = more prompt adherence, better quality
-          width: 1024, // High resolution
-          height: 1024,
+          num_inference_steps: 4, // 4-step model
+          guidance_scale: 0, // MUST be 0 for SDXL-Lightning!
         },
       },
       {
