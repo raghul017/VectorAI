@@ -91,29 +91,33 @@ export const generateImage = async (req, res) => {
     console.log("Generating image with prompt:", prompt);
 
     // All features are free - everyone can generate images
-    // Using Hugging Face Inference API (FREE!)
+    // Using Stable Diffusion XL Base - Works great with free Hugging Face API!
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
+      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
 
     const response = await axios.post(
       HF_API_URL,
-      { inputs: prompt },
+      {
+        inputs: prompt,
+        options: { wait_for_model: true },
+      },
       {
         headers: {
           Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
         },
         responseType: "arraybuffer",
+        timeout: 60000, // 60 second timeout
       }
     );
 
     // Check if model is loading
-    if (response.headers['content-type']?.includes('application/json')) {
+    if (response.headers["content-type"]?.includes("application/json")) {
       const jsonResponse = JSON.parse(Buffer.from(response.data).toString());
       if (jsonResponse.error) {
         console.error("Hugging Face API error:", jsonResponse);
         return res.json({
           success: false,
-          message: jsonResponse.error || "Model is loading, please try again in 20 seconds",
+          message: "Model is loading, please wait 30 seconds and try again.",
         });
       }
     }
@@ -137,15 +141,45 @@ export const generateImage = async (req, res) => {
     res.json({ success: true, content: secure_url });
   } catch (err) {
     console.error("Error in generateImage:", err.response?.data || err.message);
-    
+
+    // Parse error if it's JSON
+    let errorMessage = "Failed to generate image. Please try again.";
+
+    if (err.response?.data) {
+      try {
+        const errorData = JSON.parse(Buffer.from(err.response.data).toString());
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        }
+      } catch (parseErr) {
+        // Not JSON, use default message
+      }
+    }
+
     // Handle specific errors
     if (err.response?.status === 404) {
       return res.json({
         success: false,
-        message: "Image generation model is not available. Please try again in a moment.",
+        message:
+          "Image generation model is not available. Please try again in a moment.",
       });
     }
-    
+
+    if (err.response?.status === 503) {
+      return res.json({
+        success: false,
+        message: "Model is warming up. Please wait 30 seconds and try again.",
+      });
+    }
+
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      return res.json({
+        success: false,
+        message:
+          "Authentication failed. Please check your Hugging Face API key.",
+      });
+    }
+
     if (err.response?.status === 503) {
       return res.json({
         success: false,
