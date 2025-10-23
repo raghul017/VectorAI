@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, FileText, Copy, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { Edit } from "lucide-react";
 import axios from "axios";
@@ -10,15 +10,16 @@ axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const WriteArticle = () => {
   const articleLength = [
-    { length: 800, text: "Short (500-800 words)" },
-    { length: 1200, text: "Medium (800-1200 words)" },
-    { length: 1600, text: "Long (1200+ words)" },
+    { length: 800, text: "Short", desc: "500-800 words" },
+    { length: 1200, text: "Medium", desc: "800-1200 words" },
+    { length: 1600, text: "Long", desc: "1200+ words" },
   ];
 
   const [selectedLength, setSelectedLength] = useState(articleLength[0]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const { getToken } = useAuth();
 
@@ -26,7 +27,7 @@ const WriteArticle = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const prompt = `Write an article ${input} in ${selectedLength.text}`;
+      const prompt = `Write an article ${input} in ${selectedLength.text} (${selectedLength.desc})`;
       const { data } = await axios.post(
         "/api/ai/generate-article",
         { prompt, length: selectedLength.length },
@@ -35,6 +36,7 @@ const WriteArticle = () => {
 
       if (data.success === true) {
         setContent(data.content);
+        toast.success("Article generated successfully!");
       } else {
         toast.error(data.message);
       }
@@ -44,79 +46,169 @@ const WriteArticle = () => {
     setLoading(false);
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    toast.success("Article copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
-      {/* {left col} */}
-      <form
-        onSubmit={onSubmitHandler}
-        className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 "
-      >
-        <div>
-          <Sparkles className="w-6 text-[#4A7AFF]" />
-          <h1> Article Configuration</h1>
-        </div>
-        <p className="mt-6 text-sm font-medium">Article Topic</p>
-        <input
-          onChange={(e) => setInput(e.target.value)}
-          value={input}
-          type="text"
-          className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
-          placeholder="The Future of Artificial Intelligence is..."
-          required
-        />
-
-        <p className="mt-4 text-sm font-medium"> Article Length</p>
-
-        <div className="mt-3 flex gap-3 flex-wrap sm:max-w-9/11 ">
-          {articleLength.map((item, index) => (
-            <span
-              onClick={() => setSelectedLength(item)}
-              className={`text-xs px-4 py-1 border rounded-full cursor-pointer ${
-                selectedLength.text === item.text
-                  ? "bg-blue-50 text-blue-700 "
-                  : "text-gray-500 border-gray-300 hover:bg-gray-50"
-              }`}
-              key={index}
-            >
-              {item.text}
-            </span>
-          ))}
-        </div>
-        <br />
-        <button
-          disabled={loading}
-          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#226BFF] to-[#65ADFF] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer "
-        >
-          {loading ? (
-            <span className="w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin"></span>
-          ) : (
-            <Edit className="w-5" />
-          )}
-          Generate article
-        </button>
-      </form>
-
-      {/* Right col */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[600px]">
-        <div className="flex items-center gap-3">
-          <Edit className="w-5 h-5 text-[#4A7AFF]"></Edit>
-          <h1 className="text-xl font-semibold">Generated article</h1>
+    <div className="h-full overflow-y-scroll bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              AI Article Writer
+            </h1>
+          </div>
+          <p className="text-gray-600 text-sm lg:text-base">
+            Generate high-quality, SEO-optimized articles in seconds. Perfect for blogs, websites, and content marketing.
+          </p>
         </div>
 
-        {!content ? (
-          <div className="flex-1 flex justify-center items-center">
-            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-              <Edit className="w-9 h-9"></Edit>
-              <p>Enter a topic and click "Generate article" to get started</p>
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Left column - Input Form */}
+          <form
+            onSubmit={onSubmitHandler}
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden h-fit"
+          >
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                Article Configuration
+              </h2>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Topic Input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Article Topic
+                </label>
+                <input
+                  onChange={(e) => setInput(e.target.value)}
+                  value={input}
+                  type="text"
+                  className="w-full p-4 outline-none text-sm rounded-xl border-2 border-gray-200 
+                  focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition-all
+                  bg-gray-50 focus:bg-white"
+                  placeholder="e.g., The Impact of AI on Modern Healthcare"
+                  required
+                  maxLength={5000}
+                />
+              </div>
+
+              {/* Length Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Article Length
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {articleLength.map((item, index) => (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLength(item)}
+                      className={`p-4 text-center rounded-xl border-2 transition-all ${
+                        selectedLength.text === item.text
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-500 shadow-lg scale-105"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                      }`}
+                      key={index}
+                    >
+                      <div className="font-semibold text-sm">{item.text}</div>
+                      <div className={`text-xs mt-1 ${selectedLength.text === item.text ? "text-blue-100" : "text-gray-500"}`}>
+                        {item.desc}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Generate Button */}
+              <button
+                disabled={loading}
+                type="submit"
+                className="w-full flex justify-center items-center gap-3 
+                bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700
+                text-white px-6 py-4 rounded-xl font-semibold text-sm
+                shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? (
+                  <>
+                    <span className="w-5 h-5 rounded-full border-3 border-t-transparent border-white animate-spin"></span>
+                    Crafting your article...
+                  </>
+                ) : (
+                  <>
+                    <Edit className="w-5 h-5" />
+                    Generate Article
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {/* Right column - Result */}
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Your Article
+                </h2>
+                {content && (
+                  <button
+                    onClick={copyToClipboard}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 
+                    text-white rounded-lg text-sm font-medium transition-all"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Copy
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 min-h-[500px] max-h-[600px] overflow-y-auto">
+              {!content ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
+                      <FileText className="w-10 h-10 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                        Ready to write?
+                      </h3>
+                      <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                        Enter your topic, choose length, and let AI create engaging content for you
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600">
+                  <Markdown>{content}</Markdown>
+                </div>
+              )}
             </div>
           </div>
-        ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
-            <div className="reset-tw">
-              <Markdown>{content}</Markdown>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
