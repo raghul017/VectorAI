@@ -84,8 +84,10 @@ export default function Sidebar({ sidebar, setSidebar }) {
       {/* Navigation Section */}
       <div className="flex-1 overflow-y-auto py-6">
         {/* User Profile Header */}
-        <div className="px-6 mb-6">
-          <div className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all">
+        <div className="px-6 mb-6 animate-fadeIn">
+          <div className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer transform hover:scale-105"
+            onClick={openUserProfile}
+          >
             <img
               src={user.imageUrl}
               alt="User Avatar"
@@ -114,11 +116,11 @@ export default function Sidebar({ sidebar, setSidebar }) {
 
         {/* Navigation Items */}
         <div className="px-4 space-y-1">
-          <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 animate-fadeIn animation-delay-100">
             Tools
           </p>
           {/* eslint-disable-next-line no-unused-vars */}
-          {navItems.map(({ to, label, icon: Icon, color }) => (
+          {navItems.map(({ to, label, icon: Icon, color }, index) => (
             <NavLink
               key={to}
               to={to}
@@ -127,10 +129,11 @@ export default function Sidebar({ sidebar, setSidebar }) {
               className={({ isActive }) =>
                 `flex items-center justify-between gap-3 px-4 py-3 rounded-xl 
                 text-sm font-medium transition-all duration-200 group
+                animate-fadeIn animation-delay-${Math.min((index + 2) * 100, 600)}
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]"
-                    : "text-gray-300 hover:bg-white/5 hover:text-white"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] scale-105"
+                    : "text-gray-300 hover:bg-white/5 hover:text-white hover:scale-105"
                 }`
               }
             >
@@ -138,9 +141,9 @@ export default function Sidebar({ sidebar, setSidebar }) {
                 <>
                   <div className="flex items-center gap-3">
                     <div
-                      className={`p-1.5 rounded-lg ${
+                      className={`p-1.5 rounded-lg transition-transform ${
                         isActive ? "bg-white/20" : "bg-white/5"
-                      }`}
+                      } group-hover:scale-110`}
                     >
                       <Icon
                         className={`w-4 h-4 ${isActive ? "text-white" : color}`}

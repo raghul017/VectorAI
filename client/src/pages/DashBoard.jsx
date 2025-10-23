@@ -99,7 +99,7 @@ export default function DashBoard() {
 
       <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fadeIn">
           <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
             Dashboard
           </h1>
@@ -111,9 +111,9 @@ export default function DashBoard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Creations */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-purple-400/30 transition-all">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-purple-400/30 transition-all transform hover:scale-105 animate-fadeIn animation-delay-100">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl hover:scale-110 transition-transform">
                 <Sparkles className="w-6 h-6 text-blue-400" />
               </div>
               <TrendingUp className="w-5 h-5 text-green-400" />
@@ -125,9 +125,9 @@ export default function DashBoard() {
           </div>
 
           {/* Active Plan */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-purple-400/50 p-6 hover:bg-white/10 transition-all text-white shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-purple-400/50 p-6 hover:bg-white/10 transition-all text-white shadow-[0_0_20px_rgba(168,85,247,0.15)] transform hover:scale-105 animate-fadeIn animation-delay-200">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl">
+              <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl hover:scale-110 transition-transform">
                 <Protect
                   plan="premium"
                   fallback={<Gem className="w-6 h-6 text-purple-400" />}
@@ -145,9 +145,9 @@ export default function DashBoard() {
           </div>
 
           {/* This Week */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-emerald-400/30 transition-all">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-emerald-400/30 transition-all transform hover:scale-105 animate-fadeIn animation-delay-300">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl hover:scale-110 transition-transform">
                 <Activity className="w-6 h-6 text-emerald-400" />
               </div>
             </div>
@@ -163,7 +163,7 @@ export default function DashBoard() {
           </div>
 
           {/* Clear History Button Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-red-400/30 transition-all">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:bg-white/10 hover:border-red-400/30 transition-all transform hover:scale-105 animate-fadeIn animation-delay-400">
             <div className="flex flex-col items-center justify-center h-full gap-3">
               <button
                 onClick={clearAllHistory}
@@ -171,9 +171,9 @@ export default function DashBoard() {
                 className="flex items-center gap-2 px-4 py-2.5 bg-white/10 
                 hover:bg-white/15 text-white rounded-xl font-medium text-sm border border-white/20
                 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                transform hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                transform hover:scale-105 active:scale-95 disabled:hover:scale-100 group"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                 {deleting ? "Clearing..." : "Clear All History"}
               </button>
               <p className="text-xs text-gray-400 text-center">

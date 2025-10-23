@@ -88,9 +88,9 @@ const GenerateImages = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fadeIn">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl animate-float">
               <Sparkles className="w-6 h-6 text-emerald-400" />
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold text-white">
@@ -104,8 +104,8 @@ const GenerateImages = () => {
         </div>
 
         {/* Usage Badge */}
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-500/20">
-          <Zap className="w-4 h-4 text-emerald-400" />
+        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-500/20 animate-fadeIn animation-delay-100">
+          <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
           <span className="text-sm font-medium text-emerald-300">
             {usage.remaining} of {usage.limit} generations remaining today
           </span>
@@ -115,7 +115,7 @@ const GenerateImages = () => {
           {/* Left column - Input Form */}
           <form
             onSubmit={onSubmitHandler}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden animate-slideInLeft"
           >
             <div className="p-6 border-b border-white/10">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
@@ -216,7 +216,7 @@ const GenerateImages = () => {
           </form>
 
           {/* Right column - Result */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden animate-slideInRight">
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">

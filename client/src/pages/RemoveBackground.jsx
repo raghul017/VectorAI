@@ -46,10 +46,10 @@ const RemoveBackground = () => {
       {/* {left col} */}
       <form
         onSubmit={onSubmitHandler}
-        className="relative z-10 w-full max-w-lg p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+        className="relative z-10 w-full max-w-lg p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-slideInLeft"
       >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-r from-pink-600 to-red-600 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.3)]">
+        <div className="flex items-center gap-3 mb-6 animate-fadeIn">
+          <div className="p-2 bg-gradient-to-r from-pink-600 to-red-600 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.3)] animate-pulseGlow">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Background Removal</h1>
@@ -84,15 +84,15 @@ const RemoveBackground = () => {
       </form>
 
       {/* Right col */}
-      <div className="relative z-10 w-full max-w-lg p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col border border-white/10 min-h-96">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="relative z-10 w-full max-w-lg p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col border border-white/10 min-h-96 animate-slideInRight">
+        <div className="flex items-center gap-3 mb-4 animate-fadeIn">
           <Eraser className="w-5 h-5 text-pink-400" />
           <h1 className="text-xl font-semibold text-white">Processed Image</h1>
         </div>
 
         {!content ? (
           <div className="flex-1 flex justify-center items-center">
-            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400 animate-float">
               <Eraser className="w-9 h-9" />
               <p>
                 Upload an image and click "Remove Background" to get started

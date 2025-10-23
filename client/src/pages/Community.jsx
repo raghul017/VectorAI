@@ -64,7 +64,7 @@ const Community = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fadeIn">
           <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
             Community Gallery
           </h1>
@@ -74,8 +74,8 @@ const Community = () => {
         </div>
 
         {creations.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-12 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-12 text-center animate-scaleIn">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center animate-float">
               <Heart className="w-10 h-10 text-purple-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
@@ -87,10 +87,12 @@ const Community = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {creations.map((creation, index) => (
+            {creations.map((creation, index) => {
+              const animationDelay = `animation-delay-${Math.min((index % 6) * 100, 500)}`;
+              return (
               <div
                 key={index}
-                className="relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]"
+                className={`relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transform hover:scale-105 animate-scaleIn ${animationDelay}`}
               >
                 <img
                   src={creation.content}
@@ -122,14 +124,15 @@ const Community = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>
     </div>
   ) : (
     <div className="h-full flex items-center justify-center bg-[#0A0A0F]">
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-4 animate-fadeIn">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
         <p className="text-gray-400 font-medium">Loading creations...</p>
       </div>

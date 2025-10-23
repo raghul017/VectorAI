@@ -65,12 +65,12 @@ const BlogTitles = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fadeIn">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+            <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] animate-pulseGlow">
               <Lightbulb className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent animate-gradient">
               AI Blog Title Generator
             </h1>
           </div>
@@ -84,7 +84,7 @@ const BlogTitles = () => {
           {/* Left column - Input Form */}
           <form
             onSubmit={onSubmitHandler}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden h-fit"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden h-fit animate-slideInLeft"
           >
             <div className="p-6 border-b border-white/10">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
@@ -162,7 +162,7 @@ const BlogTitles = () => {
           </form>
 
           {/* Right column - Result */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden animate-slideInRight">
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
