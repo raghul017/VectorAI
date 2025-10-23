@@ -25,34 +25,15 @@ export const generateArticle = async (req, res) => {
       });
     }
 
-    const plan = req.plan;
-    const free_usage = req.free_usage;
-
-    if (plan !== "premium" && free_usage >= 10) {
-      return res.json({
-        success: false,
-        message:
-          "Free usage limit exceeded. Upgrade to premium for more requests.",
-      });
-    }
-
-    // Use gemini-2.0-flash-exp for free users, gemini-2.5-pro for premium
+    // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
-      model: plan === "premium" ? "gemini-2.5-pro" : "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash-exp",
     });
 
     const result = await model.generateContent(prompt);
     const content = result.response.text();
 
     await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content}, 'article')`;
-
-    if (plan !== "premium") {
-      await clerkClient.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          free_usage: free_usage + 1,
-        },
-      });
-    }
 
     res.json({ success: true, content });
   } catch (err) {
@@ -75,20 +56,9 @@ export const generateBlogTitle = async (req, res) => {
       });
     }
 
-    const plan = req.plan;
-    const free_usage = req.free_usage;
-
-    if (plan !== "premium" && free_usage >= 10) {
-      return res.json({
-        success: false,
-        message:
-          "Free usage limit exceeded. Upgrade to premium for more requests.",
-      });
-    }
-
-    // Use gemini-2.0-flash-exp for free users, gemini-2.5-pro for premium
+    // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
-      model: plan === "premium" ? "gemini-2.5-pro" : "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash-exp",
     });
 
     const result = await model.generateContent(prompt);
@@ -96,14 +66,6 @@ export const generateBlogTitle = async (req, res) => {
 
     await sql`INSERT INTO creations (user_id, prompt, content, type)
     VALUES (${userId}, ${prompt}, ${content}, 'blog')`;
-
-    if (plan !== "premium") {
-      await clerkClient.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          free_usage: free_usage + 1,
-        },
-      });
-    }
 
     res.json({ success: true, content });
   } catch (err) {
@@ -126,16 +88,7 @@ export const generateImage = async (req, res) => {
       });
     }
 
-    const plan = req.plan;
-    console.log("User plan:", plan);
-
-    if (plan !== "premium") {
-      return res.json({
-        success: false,
-        message: "This feature is only available for premium subscription",
-      });
-    }
-
+    // All features are free - everyone can generate images
     // Build the form data
     const formData = new FormData();
     formData.append("prompt", prompt);
@@ -178,7 +131,6 @@ export const removeImageBackground = async (req, res) => {
   try {
     const { userId } = req.auth();
     const image = req.file;
-    const plan = req.plan;
 
     // Validate input
     if (!image) {
@@ -191,13 +143,7 @@ export const removeImageBackground = async (req, res) => {
     filePath = image.path;
     console.log("Processing image:", image.originalname);
 
-    if (plan !== "premium") {
-      return res.json({
-        success: false,
-        message: "This feature is only available for premium subscription",
-      });
-    }
-
+    // All features are free - everyone can remove backgrounds
     const { secure_url } = await cloudinary.uploader.upload(image.path, {
       transformation: [
         {
@@ -232,9 +178,8 @@ export const removeImageObject = async (req, res) => {
 
   try {
     const { userId } = req.auth();
-    const { object } = req.body;
     const image = req.file;
-    const plan = req.plan;
+    const { object } = req.body;
 
     // Validate input
     if (!image) {
@@ -253,13 +198,7 @@ export const removeImageObject = async (req, res) => {
 
     filePath = image.path;
 
-    if (plan !== "premium") {
-      return res.json({
-        success: false,
-        message: "This feature is only available for premium subscription",
-      });
-    }
-
+    // All features are free - everyone can remove objects
     const { public_id } = await cloudinary.uploader.upload(image.path);
 
     const imageUrl = cloudinary.url(public_id, {
@@ -291,7 +230,6 @@ export const resumeReview = async (req, res) => {
   try {
     const { userId } = req.auth();
     const resume = req.file;
-    const plan = req.plan;
 
     // Validate input
     if (!resume) {
@@ -303,13 +241,7 @@ export const resumeReview = async (req, res) => {
 
     filePath = resume.path;
 
-    if (plan !== "premium") {
-      return res.json({
-        success: false,
-        message: "This feature is only available for premium subscription",
-      });
-    }
-
+    // All features are free - everyone can get resume reviews
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
         success: false,
@@ -330,9 +262,9 @@ export const resumeReview = async (req, res) => {
 
     const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`;
 
-    // Use gemini-2.5-pro for resume review (premium feature, better quality)
+    // Use the best available model for resume review
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-pro",
+      model: "gemini-2.0-flash-exp",
     });
 
     const result = await model.generateContent(prompt);

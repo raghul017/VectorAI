@@ -1,7 +1,11 @@
 import React from "react";
-import { PricingTable } from "@clerk/clerk-react";
+// import { PricingTable } from "@clerk/clerk-react";
 
 const Plan = () => {
+  // Pricing section is hidden - all features are currently free
+  return null;
+  
+  /* Uncomment when ready to enable paid plans
   return (
     <div className="max-w-2xl mx-auto z-20 my-30">
       <div className="text-center">
@@ -18,6 +22,7 @@ const Plan = () => {
       </div>
     </div>
   );
+  */
 };
 
 export default Plan;
