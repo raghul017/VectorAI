@@ -16,9 +16,13 @@ connectCloudinary().catch((error) => {
 // Enable Cross-Origin Resource Sharing (CORS) for the application
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production" 
-      ? ["https://vectorai-client.vercel.app", "https://vectorai-client.vercel.app/"]
-      : true,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? [
+            "https://vectorai-client.vercel.app",
+            "https://vectorai-client.vercel.app/",
+          ]
+        : true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -39,11 +43,11 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     message: "Vector.AI API is running",
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development"
+    environment: process.env.NODE_ENV || "development",
   });
 });
 
@@ -83,10 +87,10 @@ app.use("/api/user", requireAuth(), userRouter);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.json({ 
+  res.json({
     status: "healthy",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 
@@ -95,7 +99,7 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: "Route not found",
-    path: req.path
+    path: req.path,
   });
 });
 
@@ -105,7 +109,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal server error",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 });
 
