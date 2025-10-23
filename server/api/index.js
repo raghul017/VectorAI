@@ -2,16 +2,8 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import { clerkMiddleware } from "@clerk/express";
-import aiRouter from "../routes/aiRoutes.js";
-import connectCloudinary from "../configs/cloudinary.js";
-import userRouter from "../routes/userRoutes.js";
 
 const app = express();
-
-// Initialize Cloudinary (non-blocking for serverless)
-connectCloudinary().catch((err) =>
-  console.error("Cloudinary init error:", err)
-);
 
 // Enable Cross-Origin Resource Sharing (CORS) for the application
 app.use(
@@ -27,13 +19,15 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use(clerkMiddleware());
 
-app.get("/", (req, res) => res.send("🚀 VectorAI API Server v1.1 - Running Successfully!"));
+app.get("/", (req, res) =>
+  res.send("🚀 VectorAI API Server v1.2 - Running Successfully!")
+);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     status: "healthy",
-    version: "1.1.0",
+    version: "1.2.0",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "production",
     uptime: process.uptime(),
@@ -47,7 +41,7 @@ app.get("/test-db", async (req, res) => {
     const result = await sql.default`SELECT 1 as test`;
     res.json({ success: true, message: "Database connected", data: result });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message, stack: error.stack });
   }
 });
 
@@ -70,11 +64,47 @@ app.post("/test-post", (req, res) => {
   res.json({ success: true, message: "POST request works!", data: req.body });
 });
 
-// Mount routers - auth is handled by individual route middleware
-app.use("/api/ai", aiRouter);
-app.use("/api/user", userRouter);
+// Lazy load routes to catch import errors
+app.use("/api/ai", async (req, res, next) => {
+  try {
+    const { default: aiRouter } = await import("../routes/aiRoutes.js");
+    aiRouter(req, res, next);
+  } catch (error) {
+    console.error("Error loading AI routes:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to load AI routes: " + error.message,
+    });
+  }
+});
 
-// 404 handler - must come BEFORE error handler
+app.use("/api/user", async (req, res, next) => {
+  try {
+    const { default: userRouter } = await import("../routes/userRoutes.js");
+    userRouter(req, res, next);
+  } catch (error) {
+    console.error("Error loading user routes:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to load user routes: " + error.message,
+    });
+  }
+});
+
+// Initialize Cloudinary after routes
+(async () => {
+  try {
+    const { default: connectCloudinary } = await import(
+      "../configs/cloudinary.js"
+    );
+    await connectCloudinary();
+    console.log("✅ Cloudinary connected");
+  } catch (error) {
+    console.error("⚠️ Cloudinary initialization failed:", error.message);
+  }
+})();
+
+// 404 handler
 app.use((req, res, next) => {
   const error = new Error("Route not found");
   error.status = 404;
