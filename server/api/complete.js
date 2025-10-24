@@ -2,27 +2,43 @@
 
 // Lazy initialization variables
 let sql, genAI, cloudinary;
+let initialized = false;
 
 // Initialize services only when needed
-function initializeServices() {
-  if (!sql && process.env.DATABASE_URL) {
-    const { neon } = require("@neondatabase/serverless");
-    sql = neon(process.env.DATABASE_URL);
-  }
+async function initializeServices() {
+  if (initialized) return;
 
-  if (!genAI && process.env.GEMINI_API_KEY) {
-    const { GoogleGenerativeAI } = require("@google/generative-ai");
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  }
+  try {
+    console.log("Initializing services...");
 
-  if (!cloudinary && process.env.CLOUDINARY_CLOUD_NAME) {
-    const cloudinaryModule = require("cloudinary");
-    cloudinary = cloudinaryModule.v2;
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
+    if (!sql && process.env.DATABASE_URL) {
+      const { neon } = await import("@neondatabase/serverless");
+      sql = neon(process.env.DATABASE_URL);
+      console.log("Database initialized");
+    }
+
+    if (!genAI && process.env.GEMINI_API_KEY) {
+      const { GoogleGenerativeAI } = await import("@google/generative-ai");
+      genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      console.log("AI initialized");
+    }
+
+    if (!cloudinary && process.env.CLOUDINARY_CLOUD_NAME) {
+      const cloudinaryModule = await import("cloudinary");
+      cloudinary = cloudinaryModule.v2;
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+      console.log("Cloudinary initialized");
+    }
+
+    initialized = true;
+    console.log("All services initialized successfully");
+  } catch (error) {
+    console.error("Service initialization error:", error);
+    throw error;
   }
 }
 
@@ -136,7 +152,7 @@ export default async function handler(req, res) {
     // Database test
     if (req.url === "/test-db") {
       try {
-        initializeServices();
+        await initializeServices();
         if (!sql) {
           throw new Error("Database not configured - missing DATABASE_URL");
         }
@@ -159,7 +175,7 @@ export default async function handler(req, res) {
     // AI test
     if (req.url === "/test-ai") {
       try {
-        initializeServices();
+        await initializeServices();
         if (!genAI) {
           res.status(500).json({
             success: false,
@@ -192,7 +208,7 @@ export default async function handler(req, res) {
     // Generate Article
     if (req.url === "/api/ai/generate-article" && req.method === "POST") {
       try {
-        initializeServices();
+        await initializeServices();
         await verifyAuth(req);
         const { topic, wordCount = 800 } = await parseBody(req);
 
@@ -232,7 +248,7 @@ export default async function handler(req, res) {
     // Generate Blog Title
     if (req.url === "/api/ai/generate-blog-title" && req.method === "POST") {
       try {
-        initializeServices();
+        await initializeServices();
         await verifyAuth(req);
         const { topic, category = "general" } = await parseBody(req);
 
@@ -277,7 +293,7 @@ export default async function handler(req, res) {
     // Generate Images (Hugging Face FLUX.1-schnell)
     if (req.url === "/api/ai/generate-images" && req.method === "POST") {
       try {
-        initializeServices();
+        await initializeServices();
         await verifyAuth(req);
         const { prompt, style = "realistic" } = await parseBody(req);
 
