@@ -1,4 +1,5 @@
 import React from "react";
+// import { PricingTable } from "@clerk/clerk-react";
 
 const Plan = () => {
   // Pricing section is hidden - all features are currently free
