@@ -1,18 +1,30 @@
 // Complete but minimal serverless API for Vector.AI
-import { neon } from "@neondatabase/serverless";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { v2 as cloudinary } from "cloudinary";
 
-// Initialize services
-const sql = neon(process.env.DATABASE_URL);
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Lazy initialization variables
+let sql, genAI, cloudinary;
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Initialize services only when needed
+function initializeServices() {
+  if (!sql && process.env.DATABASE_URL) {
+    const { neon } = require("@neondatabase/serverless");
+    sql = neon(process.env.DATABASE_URL);
+  }
+
+  if (!genAI && process.env.GEMINI_API_KEY) {
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  }
+
+  if (!cloudinary && process.env.CLOUDINARY_CLOUD_NAME) {
+    const cloudinaryModule = require("cloudinary");
+    cloudinary = cloudinaryModule.v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  }
+}
 
 // Helper function to parse JSON body
 async function parseBody(req) {
@@ -84,6 +96,7 @@ export default async function handler(req, res) {
           "POST /api/ai/generate-images",
           "GET /api/ai/image-usage",
           "GET /api/user/creations",
+          "GET /api/user/get-user-creations",
           "GET /api/user/public-creations",
         ],
       });
@@ -123,6 +136,10 @@ export default async function handler(req, res) {
     // Database test
     if (req.url === "/test-db") {
       try {
+        initializeServices();
+        if (!sql) {
+          throw new Error("Database not configured - missing DATABASE_URL");
+        }
         const result = await sql`SELECT 1 as test, NOW() as timestamp`;
         res.status(200).json({
           success: true,
@@ -142,7 +159,8 @@ export default async function handler(req, res) {
     // AI test
     if (req.url === "/test-ai") {
       try {
-        if (!process.env.GEMINI_API_KEY) {
+        initializeServices();
+        if (!genAI) {
           res.status(500).json({
             success: false,
             message: "GEMINI_API_KEY not configured",
@@ -174,6 +192,7 @@ export default async function handler(req, res) {
     // Generate Article
     if (req.url === "/api/ai/generate-article" && req.method === "POST") {
       try {
+        initializeServices();
         await verifyAuth(req);
         const { topic, wordCount = 800 } = await parseBody(req);
 
@@ -213,6 +232,7 @@ export default async function handler(req, res) {
     // Generate Blog Title
     if (req.url === "/api/ai/generate-blog-title" && req.method === "POST") {
       try {
+        initializeServices();
         await verifyAuth(req);
         const { topic, category = "general" } = await parseBody(req);
 
@@ -257,6 +277,7 @@ export default async function handler(req, res) {
     // Generate Images (Hugging Face FLUX.1-schnell)
     if (req.url === "/api/ai/generate-images" && req.method === "POST") {
       try {
+        initializeServices();
         await verifyAuth(req);
         const { prompt, style = "realistic" } = await parseBody(req);
 
@@ -341,7 +362,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    // User Creations (placeholder)
+    // User Creations - Original route
     if (req.url === "/api/user/creations" && req.method === "GET") {
       try {
         await verifyAuth(req);
@@ -354,6 +375,25 @@ export default async function handler(req, res) {
         res.status(500).json({
           success: false,
           message: "Failed to get creations",
+          error: error.message,
+        });
+      }
+      return;
+    }
+
+    // User Creations - Frontend expects this route
+    if (req.url === "/api/user/get-user-creations" && req.method === "GET") {
+      try {
+        await verifyAuth(req);
+        res.status(200).json({
+          success: true,
+          creations: [],
+          message: "No user creations found",
+        });
+      } catch (error) {
+        res.status(401).json({
+          success: false,
+          message: "Unauthorized",
           error: error.message,
         });
       }
@@ -384,6 +424,7 @@ export default async function handler(req, res) {
         "POST /api/ai/generate-images",
         "GET /api/ai/image-usage",
         "GET /api/user/creations",
+        "GET /api/user/get-user-creations",
         "GET /api/user/public-creations",
       ],
     });
