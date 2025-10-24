@@ -46,15 +46,52 @@ async function initializeServices() {
 async function parseBody(req) {
   return new Promise((resolve) => {
     let body = "";
+    let timeoutId;
+
+    // Set a timeout for body parsing
+    timeoutId = setTimeout(() => {
+      console.log("Body parsing timeout");
+      resolve({});
+    }, 10000); // 10 second timeout
+
     req.on("data", (chunk) => {
+      console.log("Receiving chunk:", chunk.length, "bytes");
       body += chunk.toString();
     });
+
     req.on("end", () => {
+      clearTimeout(timeoutId);
+      console.log("Raw body received:", body);
+      console.log("Body length:", body.length);
+      console.log("Content-Type:", req.headers["content-type"]);
+      console.log("Content-Length:", req.headers["content-length"]);
+
+      if (!body || body.trim() === "") {
+        console.log("Empty or whitespace-only body received");
+        resolve({});
+        return;
+      }
+
       try {
-        resolve(body ? JSON.parse(body) : {});
-      } catch {
+        const parsed = JSON.parse(body);
+        console.log("Parsed body successfully:", parsed);
+        resolve(parsed);
+      } catch (error) {
+        console.error("JSON parse error:", error.message);
+        console.error("Attempted to parse:", JSON.stringify(body));
         resolve({});
       }
+    });
+
+    req.on("error", (error) => {
+      clearTimeout(timeoutId);
+      console.error("Request stream error:", error);
+      resolve({});
+    });
+
+    req.on("close", () => {
+      clearTimeout(timeoutId);
+      console.log("Request stream closed");
     });
   });
 }
@@ -77,6 +114,8 @@ async function verifyAuth(req) {
 
 export default async function handler(req, res) {
   console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+  console.log("Headers:", JSON.stringify(req.headers, null, 2));
+  console.log("Has body stream:", !!req.readable);
 
   try {
     // Set CORS headers
@@ -210,12 +249,22 @@ export default async function handler(req, res) {
       try {
         await initializeServices();
         await verifyAuth(req);
-        const { topic, wordCount = 800 } = await parseBody(req);
+        const body = await parseBody(req);
+        console.log("Received body:", body);
+
+        const { topic, wordCount = 800 } = body;
 
         if (!topic) {
-          res
-            .status(400)
-            .json({ success: false, message: "Topic is required" });
+          res.status(400).json({
+            success: false,
+            message: "Topic is required",
+            receivedBody: body,
+            debug: {
+              hasBody: !!body,
+              bodyKeys: Object.keys(body || {}),
+              contentType: req.headers["content-type"],
+            },
+          });
           return;
         }
 
