@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, Copy, CheckCircle2 } from "lucide-react";
 import React from "react";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
@@ -13,6 +13,7 @@ const ReviewResume = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const { getToken } = useAuth();
 
@@ -37,6 +38,13 @@ const ReviewResume = () => {
       toast.error(err.message);
     }
     setLoading(false);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    toast.success("Analysis copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
   };
   return (
     <div className="h-full overflow-y-scroll bg-[#0A0A0F] p-6 flex items-start flex-wrap gap-4">
@@ -85,22 +93,51 @@ const ReviewResume = () => {
       </form>
 
       {/* Right col */}
-      <div className="relative z-10 w-full max-w-lg p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col border border-white/10 min-h-96 max-h-[600px]">
-        <div className="flex items-center gap-3 mb-4">
-          <FileText className="w-5 h-5 text-emerald-400" />
-          <h1 className="text-xl font-semibold text-white">Analysis Result</h1>
+      <div className="relative z-10 w-full max-w-2xl p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col border border-white/10 min-h-[500px] max-h-[800px] animate-slideInRight">
+        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-3">
+            <FileText className="w-5 h-5 text-emerald-400" />
+            <h1 className="text-xl font-semibold text-white">Analysis Result</h1>
+          </div>
+          {content && (
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 
+              text-white rounded-lg text-sm font-medium transition-all border border-white/20 hover:border-emerald-500/30"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-400">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  Copy
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {!content ? (
           <div className="flex-1 flex justify-center items-center">
             <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-              <FileText className="w-9 h-9" />
+              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                <FileText className="w-8 h-8 opacity-50" />
+              </div>
               <p>Upload a resume and click "Review Resume" to get started</p>
             </div>
           </div>
         ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm">
-            <div className="prose prose-sm prose-invert max-w-none">
+          <div className="mt-2 h-full overflow-y-auto pr-2 custom-scrollbar">
+            <div className="prose prose-lg prose-invert max-w-none 
+              prose-headings:text-white prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+              prose-p:text-gray-300 prose-p:leading-relaxed
+              prose-strong:text-emerald-400 prose-strong:font-semibold
+              prose-ul:text-gray-300 prose-li:marker:text-emerald-500
+              prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+              prose-blockquote:border-l-emerald-500 prose-blockquote:bg-white/5 prose-blockquote:p-4 prose-blockquote:rounded-r-lg">
               <Markdown>{content}</Markdown>
             </div>
           </div>

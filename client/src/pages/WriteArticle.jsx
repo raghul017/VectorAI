@@ -213,7 +213,15 @@ const WriteArticle = () => {
                   </div>
                 </div>
               ) : (
-                <div className="prose prose-sm prose-invert max-w-none">
+                <div className="prose prose-lg prose-invert max-w-none 
+                  prose-headings:text-white prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                  prose-p:text-gray-300 prose-p:leading-relaxed
+                  prose-strong:text-purple-400 prose-strong:font-semibold
+                  prose-ul:text-gray-300 prose-li:marker:text-purple-500
+                  prose-ol:text-gray-300 prose-li:text-gray-300
+                  prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline
+                  prose-blockquote:border-l-purple-500 prose-blockquote:bg-white/5 prose-blockquote:p-4 prose-blockquote:rounded-r-lg
+                  prose-code:text-purple-300 prose-code:bg-white/10 prose-code:px-2 prose-code:py-1 prose-code:rounded">
                   <Markdown>{content}</Markdown>
                 </div>
               )}
