@@ -37,7 +37,7 @@ export const generateArticle = async (req, res) => {
 
     // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
     });
 
     const result = await model.generateContent(prompt);
@@ -107,7 +107,7 @@ export const generateBlogTitle = async (req, res) => {
 
     // All features are free - use the best model for everyone
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
     });
 
     const result = await model.generateContent(prompt);
@@ -440,7 +440,7 @@ export const resumeReview = async (req, res) => {
 
     // Use the best available model for resume review
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
     });
 
     const result = await model.generateContent(prompt);
