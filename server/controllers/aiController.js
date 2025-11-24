@@ -179,7 +179,7 @@ export const generateImage = async (req, res) => {
     // Fast generation (~2-4 seconds), excellent detail, photorealistic results
     // Optimized parameters for maximum quality output
     const HF_API_URL =
-      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+      "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell";
 
     const response = await axios.post(
       HF_API_URL,
