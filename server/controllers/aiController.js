@@ -13,6 +13,56 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Constants
 const DAILY_IMAGE_LIMIT = 15;
+const MAX_RETRIES = 3;
+const INITIAL_DELAY = 2000; // 2 seconds
+
+// Helper: Delay function
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper: Generate content with exponential backoff retry
+const generateWithRetry = async (model, prompt, retries = MAX_RETRIES) => {
+  let lastError;
+  
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (err) {
+      lastError = err;
+      const isRateLimit = err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('Too Many Requests');
+      
+      if (isRateLimit && attempt < retries) {
+        // Exponential backoff: 2s, 4s, 8s...
+        const waitTime = INITIAL_DELAY * Math.pow(2, attempt - 1);
+        console.log(`Rate limited. Attempt ${attempt}/${retries}. Waiting ${waitTime/1000}s before retry...`);
+        await delay(waitTime);
+      } else {
+        throw err;
+      }
+    }
+  }
+  
+  throw lastError;
+};
+
+// Helper: Parse rate limit error for user-friendly message
+const parseRateLimitError = (err) => {
+  const errorStr = err.message || '';
+  
+  // Try to extract retry time from error message
+  const retryMatch = errorStr.match(/retry in (\d+\.?\d*)/i);
+  const retrySeconds = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : 60;
+  
+  if (errorStr.includes('quota') || errorStr.includes('429') || errorStr.includes('Too Many Requests')) {
+    return {
+      isRateLimit: true,
+      message: `AI service is busy. Please try again in ${retrySeconds} seconds.`,
+      retryAfter: retrySeconds
+    };
+  }
+  
+  return { isRateLimit: false, message: err.message };
+};
 
 // Article Generation
 export const generateArticle = async (req, res) => {
@@ -20,29 +70,18 @@ export const generateArticle = async (req, res) => {
     const { userId } = req.auth();
     const { prompt, length } = req.body;
 
-    // Validate input
     if (!prompt) {
-      return res.json({
-        success: false,
-        message: "Prompt is required",
-      });
+      return res.json({ success: false, message: "Prompt is required" });
     }
 
     if (prompt.length > 5000) {
-      return res.json({
-        success: false,
-        message: "Prompt is too long. Maximum 5000 characters allowed.",
-      });
+      return res.json({ success: false, message: "Prompt is too long. Maximum 5000 characters allowed." });
     }
 
-    // All features are free - use the best model for everyone
-    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-
-    const result = await model.generateContent(prompt);
-    const content = result.response.text();
+    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+    
+    // Use retry helper
+    const content = await generateWithRetry(model, prompt);
 
     await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content}, 'article')`;
 
@@ -50,11 +89,14 @@ export const generateArticle = async (req, res) => {
   } catch (err) {
     console.error("Error in generateArticle:", err);
     
-    // Handle quota errors with helpful message
-    if (err.message?.includes('quota') || err.message?.includes('429')) {
-      return res.json({ 
+    const { isRateLimit, message, retryAfter } = parseRateLimitError(err);
+    
+    if (isRateLimit) {
+      return res.status(429).json({ 
         success: false, 
-        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+        message,
+        retryAfter,
+        code: 'RATE_LIMITED'
       });
     }
     
@@ -68,7 +110,7 @@ export const getImageUsage = async (req, res) => {
     const { userId } = req.auth();
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
+    today.setHours(0, 0, 0, 0);
 
     const todayCount = await sql`
       SELECT COUNT(*) as count 
@@ -86,7 +128,7 @@ export const getImageUsage = async (req, res) => {
       limit: DAILY_IMAGE_LIMIT,
       used: used,
       remaining: remaining > 0 ? remaining : 0,
-      resetTime: new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+      resetTime: new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString(),
     });
   } catch (err) {
     console.error("Error in getImageUsage:", err);
@@ -100,29 +142,18 @@ export const generateBlogTitle = async (req, res) => {
     const { userId } = req.auth();
     const { prompt } = req.body;
 
-    // Validate input
     if (!prompt) {
-      return res.json({
-        success: false,
-        message: "Prompt is required",
-      });
+      return res.json({ success: false, message: "Prompt is required" });
     }
 
     if (prompt.length > 5000) {
-      return res.json({
-        success: false,
-        message: "Prompt is too long. Maximum 5000 characters allowed.",
-      });
+      return res.json({ success: false, message: "Prompt is too long. Maximum 5000 characters allowed." });
     }
 
-    // All features are free - use the best model for everyone
-    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-
-    const result = await model.generateContent(prompt);
-    const content = result.response.text();
+    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+    
+    // Use retry helper
+    const content = await generateWithRetry(model, prompt);
 
     await sql`INSERT INTO creations (user_id, prompt, content, type)
     VALUES (${userId}, ${prompt}, ${content}, 'blog')`;
@@ -131,11 +162,14 @@ export const generateBlogTitle = async (req, res) => {
   } catch (err) {
     console.error("Error in generateBlogTitle:", err);
     
-    // Handle quota errors with helpful message
-    if (err.message?.includes('quota') || err.message?.includes('429')) {
-      return res.json({ 
+    const { isRateLimit, message, retryAfter } = parseRateLimitError(err);
+    
+    if (isRateLimit) {
+      return res.status(429).json({ 
         success: false, 
-        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+        message,
+        retryAfter,
+        code: 'RATE_LIMITED'
       });
     }
     
@@ -149,24 +183,17 @@ export const generateImage = async (req, res) => {
     const { userId } = req.auth();
     const { prompt, publish } = req.body;
 
-    // Validate input
     if (!prompt) {
-      return res.json({
-        success: false,
-        message: "Prompt is required",
-      });
+      return res.json({ success: false, message: "Prompt is required" });
     }
 
     if (prompt.length > 1000) {
-      return res.json({
-        success: false,
-        message: "Prompt is too long. Maximum 1000 characters allowed.",
-      });
+      return res.json({ success: false, message: "Prompt is too long. Maximum 1000 characters allowed." });
     }
 
-    // Check daily rate limit (15 images per day)
+    // Check daily rate limit
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
+    today.setHours(0, 0, 0, 0);
 
     const todayCount = await sql`
       SELECT COUNT(*) as count 
@@ -177,9 +204,7 @@ export const generateImage = async (req, res) => {
     `;
 
     const currentCount = parseInt(todayCount[0].count);
-    console.log(
-      `User ${userId} has generated ${currentCount}/${DAILY_IMAGE_LIMIT} images today`
-    );
+    console.log(`User ${userId} has generated ${currentCount}/${DAILY_IMAGE_LIMIT} images today`);
 
     if (currentCount >= DAILY_IMAGE_LIMIT) {
       return res.json({
@@ -189,25 +214,16 @@ export const generateImage = async (req, res) => {
     }
 
     console.log("Generating image with prompt:", prompt);
-    console.log(
-      "Using Hugging Face API Key:",
-      process.env.HUGGINGFACE_API_KEY?.substring(0, 10) + "..."
-    );
 
-    // Using FLUX.1-schnell - BEST FREE MODEL AVAILABLE!
-    // Tested against 10+ models - produces largest files (142KB) = highest quality
-    // Fast generation (~2-4 seconds), excellent detail, photorealistic results
-    // Optimized parameters for maximum quality output
-    const HF_API_URL =
-      "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell";
+    const HF_API_URL = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell";
 
     const response = await axios.post(
       HF_API_URL,
       {
         inputs: prompt,
         parameters: {
-          num_inference_steps: 4, // Optimized for FLUX.1-schnell (4 steps is ideal)
-          guidance_scale: 0, // FLUX uses guidance-free generation
+          num_inference_steps: 4,
+          guidance_scale: 0,
         },
       },
       {
@@ -221,9 +237,6 @@ export const generateImage = async (req, res) => {
       }
     );
 
-    console.log("Response status:", response.status);
-    console.log("Response content-type:", response.headers["content-type"]);
-
     // Check if response is an error message (JSON)
     if (response.headers["content-type"]?.includes("application/json")) {
       const jsonResponse = JSON.parse(Buffer.from(response.data).toString());
@@ -233,24 +246,15 @@ export const generateImage = async (req, res) => {
         return res.json({
           success: false,
           message: jsonResponse.error.includes("loading")
-            ? "Model is loading. Please wait 20 seconds and try again."
+            ? "Model is warming up. Please wait 20 seconds and try again."
             : jsonResponse.error,
         });
       }
     }
 
-    // Convert raw bytes to base64 data URI
-    const base64Image = `data:image/png;base64,${Buffer.from(
-      response.data
-    ).toString("base64")}`;
-
-    console.log("Image converted to base64, uploading to Cloudinary...");
-
-    // Upload to Cloudinary
+    const base64Image = `data:image/png;base64,${Buffer.from(response.data).toString("base64")}`;
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
-    console.log("Uploaded to Cloudinary:", secure_url);
 
-    // Persist to database
     await sql`
       INSERT INTO creations (user_id, prompt, content, type, publish)
       VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})
@@ -261,25 +265,17 @@ export const generateImage = async (req, res) => {
   } catch (err) {
     console.error("=== ERROR IN IMAGE GENERATION ===");
     console.error("Status:", err.response?.status);
-    console.error("Status Text:", err.response?.statusText);
     console.error("Error Message:", err.message);
 
-    // Try to parse error response
     let errorMessage = "Failed to generate image. Please try again.";
 
     if (err.response?.data) {
       try {
         const errorText = Buffer.from(err.response.data).toString();
-        console.error("Error Response:", errorText);
-
-        // Try to parse as JSON
         try {
           const errorData = JSON.parse(errorText);
-          if (errorData.error) {
-            errorMessage = errorData.error;
-          }
+          if (errorData.error) errorMessage = errorData.error;
         } catch (e) {
-          // Not JSON, use raw text
           errorMessage = errorText.substring(0, 200);
         }
       } catch (parseErr) {
@@ -287,36 +283,24 @@ export const generateImage = async (req, res) => {
       }
     }
 
-    // Handle specific status codes
-    if (err.response?.status === 400) {
-      return res.json({
-        success: false,
-        message: "Invalid request. " + errorMessage,
-      });
-    }
-
-    if (err.response?.status === 404) {
-      return res.json({
-        success: false,
-        message: "Model not found. Please try again.",
-      });
-    }
-
     if (err.response?.status === 503) {
       return res.json({
         success: false,
-        message: "Model is loading. Please wait 30 seconds and try again.",
+        message: "Image model is warming up. Please wait 30 seconds and try again.",
+        code: 'MODEL_LOADING'
       });
     }
 
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      return res.json({
+    if (err.response?.status === 429) {
+      return res.status(429).json({
         success: false,
-        message: "Authentication failed. API key may be invalid.",
+        message: "Image service is busy. Please try again in 1 minute.",
+        retryAfter: 60,
+        code: 'RATE_LIMITED'
       });
     }
 
-    res.json({ success: false, message: err.message });
+    res.json({ success: false, message: errorMessage });
   }
 };
 
@@ -326,47 +310,33 @@ export const removeImageBackground = async (req, res) => {
     const { userId } = req.auth();
     const image = req.file;
 
-    // Validate input
     if (!image) {
-      return res.json({
-        success: false,
-        message: "Image file is required",
-      });
+      return res.json({ success: false, message: "Image file is required" });
     }
 
     console.log("Processing image:", image.originalname, "Size:", image.size);
 
-    // Convert buffer to base64 for Cloudinary (memory storage)
     const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
 
-    // All features are free - everyone can remove backgrounds
     const { secure_url } = await cloudinary.uploader.upload(base64Image, {
-      transformation: [
-        {
-          effect: "background_removal",
-          background_removal: "remove_the_background",
-        },
-      ],
+      transformation: [{
+        effect: "background_removal",
+        background_removal: "remove_the_background",
+      }],
     });
 
-    // Save to database
     await sql`
       INSERT INTO creations (user_id, prompt, content, type)
       VALUES (${userId}, 'Remove background from image', ${secure_url}, 'image')
     `;
 
     console.log("Background removal successful");
-
     res.json({ success: true, content: secure_url });
   } catch (error) {
     console.error("Error in removeImageBackground:", error);
     
-    // Handle file size errors
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.json({ 
-        success: false, 
-        message: "File too large. Maximum size is 4MB."
-      });
+      return res.json({ success: false, message: "File too large. Maximum size is 4MB." });
     }
     
     res.json({ success: false, message: error.message });
@@ -379,27 +349,18 @@ export const removeImageObject = async (req, res) => {
     const image = req.file;
     const { object } = req.body;
 
-    // Validate input
     if (!image) {
-      return res.json({
-        success: false,
-        message: "Image file is required",
-      });
+      return res.json({ success: false, message: "Image file is required" });
     }
 
     if (!object) {
-      return res.json({
-        success: false,
-        message: "Object description is required",
-      });
+      return res.json({ success: false, message: "Object description is required" });
     }
 
     console.log("Removing object:", object, "from image:", image.originalname);
 
-    // Convert buffer to base64 for Cloudinary (memory storage)
     const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
 
-    // All features are free - everyone can remove objects
     const { public_id } = await cloudinary.uploader.upload(base64Image);
 
     const imageUrl = cloudinary.url(public_id, {
@@ -407,7 +368,6 @@ export const removeImageObject = async (req, res) => {
       resource_type: "image",
     });
 
-    // Persist to database
     await sql`
       INSERT INTO creations (user_id, prompt, content, type)
       VALUES (${userId}, ${`Remove ${object} from image`}, ${imageUrl}, 'image')
@@ -417,12 +377,8 @@ export const removeImageObject = async (req, res) => {
   } catch (err) {
     console.error("Error in removeImageObject:", err);
     
-    // Handle file size errors
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.json({ 
-        success: false, 
-        message: "File too large. Maximum size is 4MB."
-      });
+      return res.json({ success: false, message: "File too large. Maximum size is 4MB." });
     }
     
     res.json({ success: false, message: err.message });
@@ -434,46 +390,32 @@ export const resumeReview = async (req, res) => {
     const { userId } = req.auth();
     const resume = req.file;
 
-    // Validate input
     if (!resume) {
-      return res.json({
-        success: false,
-        message: "Resume file is required",
-      });
+      return res.json({ success: false, message: "Resume file is required" });
     }
 
     console.log("Reviewing resume:", resume.originalname, "Size:", resume.size);
 
-    // File size validation (already handled by multer, but double-check)
     if (resume.size > 4 * 1024 * 1024) {
-      return res.json({
-        success: false,
-        message: "File size exceeds 4MB limit.",
-      });
+      return res.json({ success: false, message: "File size exceeds 4MB limit." });
     }
 
-    // Use buffer from memory storage instead of reading from disk
     const dataBuffer = resume.buffer;
     const pdfData = await pdf(dataBuffer);
 
     if (!pdfData.text || pdfData.text.trim().length === 0) {
       return res.json({
         success: false,
-        message:
-          "Could not extract text from PDF. Please ensure the file is not corrupted.",
+        message: "Could not extract text from PDF. Please ensure the file is not corrupted.",
       });
     }
 
     const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`;
 
-    // Use the best available model for resume review
-    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-
-    const result = await model.generateContent(prompt);
-    const content = result.response.text();
+    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+    
+    // Use retry helper
+    const content = await generateWithRetry(model, prompt);
 
     await sql`
       INSERT INTO creations (user_id, prompt, content, type)
@@ -489,19 +431,18 @@ export const resumeReview = async (req, res) => {
   } catch (err) {
     console.error("Error in resumeReview:", err);
     
-    // Handle file size errors
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.json({ 
-        success: false, 
-        message: "File too large. Maximum size is 4MB."
-      });
+      return res.json({ success: false, message: "File too large. Maximum size is 4MB." });
     }
     
-    // Handle quota errors with helpful message
-    if (err.message?.includes('quota') || err.message?.includes('429')) {
-      return res.json({ 
+    const { isRateLimit, message, retryAfter } = parseRateLimitError(err);
+    
+    if (isRateLimit) {
+      return res.status(429).json({ 
         success: false, 
-        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+        message,
+        retryAfter,
+        code: 'RATE_LIMITED'
       });
     }
     

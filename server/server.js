@@ -33,7 +33,7 @@ app.get("/test-ai", async (req, res) => {
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     // Updated to use current Gemini 2.0 model
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
     const result = await model.generateContent("Say hello");
     const content = result.response.text();
     res.json({ success: true, message: "AI connected", response: content });
