@@ -1,96 +1,101 @@
-import { assets } from "../assets/assets";
-
 export default function Footer() {
   return (
-    <footer className="relative px-6 md:px-16 lg:px-24 xl:px-32 pt-16 w-full bg-[#0A0A0F] border-t border-white/5 overflow-hidden">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+    <footer id="contact" className="overflow-hidden text-white bg-[#050505] border-t border-neutral-800 pt-24">
+      {/* Giant Brand Text */}
+      <div 
+        className="text-center w-full mb-20 px-4"
+        style={{
+          maskImage: "linear-gradient(180deg, transparent, black 0%, black 55%, transparent)",
+          WebkitMaskImage: "linear-gradient(180deg, transparent, black 0%, black 55%, transparent)",
+        }}
+      >
+        <h1 className="text-[22vw] leading-[0.7] select-none font-bold text-[#141414] tracking-tighter scale-y-110">
+          VECTOR
+        </h1>
+      </div>
 
-      <div className="relative z-10 flex flex-col md:flex-row justify-between w-full gap-10 border-b border-white/10 pb-10">
-        <div className="md:max-w-96 animate-slideInLeft">
-          <img
-            className="h-9 brightness-200 hover:scale-110 transition-transform duration-500"
-            src={assets.logo}
-            alt="logo"
-          />
-          <p className="mt-6 text-sm text-gray-400 leading-relaxed animate-fadeIn animation-delay-200">
-            Experience the Power of AI with Vector.AI <br /> Transform your
-            content creation with our suite of premium AI Tools. Write articles,
-            generate images, and enhance your workflow.
-          </p>
+      {/* Links Grid */}
+      <div className="border-t border-neutral-900 grid grid-cols-1 lg:grid-cols-2">
+        {/* Left Side: Navigation Links */}
+        <div className="p-8 md:p-16 grid grid-cols-2 gap-12 lg:border-r border-neutral-900">
+          <div className="flex flex-col gap-6">
+            <a href="#home" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              Home
+            </a>
+            <a href="#work" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              Features
+            </a>
+            <a href="#tools" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              AI Suite
+            </a>
+          </div>
+          <div className="flex flex-col gap-6">
+            <a href="#pricing" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              Pricing
+            </a>
+            <a href="mailto:contact@vectorai.com" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              Contact Us
+            </a>
+            <a href="#" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              Twitter/X
+            </a>
+            <a href="#" className="text-xs font-medium text-neutral-500 uppercase tracking-widest hover:text-white transition-colors">
+              LinkedIn
+            </a>
+          </div>
         </div>
-        <div className="flex-1 flex items-start md:justify-end gap-20">
-          <div className="animate-slideUp animation-delay-300">
-            <h2 className="font-semibold mb-5 text-white">Company</h2>
-            <ul className="text-sm space-y-3 text-gray-400">
-              <li className="animate-fadeIn animation-delay-400 hover:translate-x-2 transition-transform duration-300">
-                <a
-                  href="#"
-                  className="hover:text-purple-400 transition-colors duration-300"
-                >
-                  Home
-                </a>
-              </li>
-              <li className="animate-fadeIn animation-delay-500 hover:translate-x-2 transition-transform duration-300">
-                <a
-                  href="#"
-                  className="hover:text-purple-400 transition-colors duration-300"
-                >
-                  About us
-                </a>
-              </li>
-              <li className="animate-fadeIn animation-delay-600 hover:translate-x-2 transition-transform duration-300">
-                <a
-                  href="#"
-                  className="hover:text-purple-400 transition-colors duration-300"
-                >
-                  Contact us
-                </a>
-              </li>
-              <li className="animate-fadeIn animation-delay-700 hover:translate-x-2 transition-transform duration-300">
-                <a
-                  href="#"
-                  className="hover:text-purple-400 transition-colors duration-300"
-                >
-                  Privacy policy
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="animate-slideInRight animation-delay-400">
-            <h2 className="font-semibold text-white mb-5">
-              Subscribe to our newsletter
-            </h2>
-            <div className="text-sm space-y-3 text-gray-400">
-              <p className="animate-fadeIn animation-delay-500">
-                The latest news, articles, and resources, sent to your inbox
-                weekly.
-              </p>
-              <div className="flex items-center gap-2 pt-4 animate-scaleIn animation-delay-600">
-                <input
-                  className="border border-white/10 bg-white/5 placeholder-gray-500 text-white
-                                    focus:ring-2 ring-purple-500 focus:border-purple-500 outline-none 
-                                    w-full max-w-64 h-10 rounded-lg px-3 backdrop-blur-sm
-                                    transition-all duration-300 hover:border-purple-500/30"
-                  type="email"
-                  placeholder="Enter your email"
-                />
-                <button
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 
-                                w-28 h-10 text-white rounded-lg cursor-pointer font-semibold
-                                transition-all duration-500 transform hover:scale-110 hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]
-                                shadow-[0_0_20px_rgba(168,85,247,0.3)]"
-                >
-                  Subscribe
-                </button>
-              </div>
-            </div>
-          </div>
+
+        {/* Right Side: AI Illustration */}
+        <div className="lg:h-auto lg:border-t-0 flex overflow-hidden w-full h-48 border-neutral-900 border-t relative items-center justify-center">
+          <svg viewBox="0 0 400 120" className="opacity-20 max-h-[160px] w-[600px] h-[160px]" preserveAspectRatio="xMidYMid meet">
+            {/* AI Brain/Circuit Pattern */}
+            <g stroke="white" strokeWidth="1" fill="none">
+              {/* Central Circle */}
+              <circle cx="200" cy="60" r="35" />
+              <circle cx="200" cy="60" r="25" />
+              <circle cx="200" cy="60" r="8" fill="white" opacity="0.3" />
+              
+              {/* Neural connections - left */}
+              <path d="M165 60 L100 30 M165 60 L100 60 M165 60 L100 90" />
+              <circle cx="100" cy="30" r="6" />
+              <circle cx="100" cy="60" r="6" />
+              <circle cx="100" cy="90" r="6" />
+              
+              {/* Neural connections - right */}
+              <path d="M235 60 L300 30 M235 60 L300 60 M235 60 L300 90" />
+              <circle cx="300" cy="30" r="6" />
+              <circle cx="300" cy="60" r="6" />
+              <circle cx="300" cy="90" r="6" />
+              
+              {/* Top nodes */}
+              <path d="M200 25 L170 0 M200 25 L230 0" />
+              <circle cx="170" cy="0" r="4" />
+              <circle cx="230" cy="0" r="4" />
+              
+              {/* Bottom nodes */}
+              <path d="M200 95 L170 120 M200 95 L230 120" />
+              <circle cx="170" cy="120" r="4" />
+              <circle cx="230" cy="120" r="4" />
+              
+              {/* Data flow dots */}
+              <circle cx="130" cy="45" r="2" fill="white" opacity="0.5" />
+              <circle cx="150" cy="55" r="2" fill="white" opacity="0.5" />
+              <circle cx="250" cy="55" r="2" fill="white" opacity="0.5" />
+              <circle cx="270" cy="45" r="2" fill="white" opacity="0.5" />
+            </g>
+          </svg>
         </div>
       </div>
-      <p className="relative z-10 pt-6 text-center text-xs md:text-sm pb-6 text-gray-500 animate-fadeIn animation-delay-800">
-        Copyright 2025 © VectorAI. All Rights Reserved.
-      </p>
+
+      {/* Copyright Row */}
+      <div className="border-t border-neutral-900 px-8 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-neutral-600 font-medium tracking-wide">
+        <div>© 2024 VectorAI. All rights reserved</div>
+        <div className="flex gap-8">
+          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+          <a href="#" className="hover:text-white transition-colors">Cookies</a>
+        </div>
+      </div>
     </footer>
   );
 }

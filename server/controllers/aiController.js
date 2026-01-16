@@ -36,8 +36,9 @@ export const generateArticle = async (req, res) => {
     }
 
     // All features are free - use the best model for everyone
+    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
     });
 
     const result = await model.generateContent(prompt);
@@ -48,6 +49,15 @@ export const generateArticle = async (req, res) => {
     res.json({ success: true, content });
   } catch (err) {
     console.error("Error in generateArticle:", err);
+    
+    // Handle quota errors with helpful message
+    if (err.message?.includes('quota') || err.message?.includes('429')) {
+      return res.json({ 
+        success: false, 
+        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+      });
+    }
+    
     res.json({ success: false, message: err.message });
   }
 };
@@ -106,8 +116,9 @@ export const generateBlogTitle = async (req, res) => {
     }
 
     // All features are free - use the best model for everyone
+    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
     });
 
     const result = await model.generateContent(prompt);
@@ -119,6 +130,15 @@ export const generateBlogTitle = async (req, res) => {
     res.json({ success: true, content });
   } catch (err) {
     console.error("Error in generateBlogTitle:", err);
+    
+    // Handle quota errors with helpful message
+    if (err.message?.includes('quota') || err.message?.includes('429')) {
+      return res.json({ 
+        success: false, 
+        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+      });
+    }
+    
     res.json({ success: false, message: err.message });
   }
 };
@@ -302,8 +322,6 @@ export const generateImage = async (req, res) => {
 
 // Remove Background Image
 export const removeImageBackground = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const image = req.file;
@@ -316,11 +334,13 @@ export const removeImageBackground = async (req, res) => {
       });
     }
 
-    filePath = image.path;
-    console.log("Processing image:", image.originalname);
+    console.log("Processing image:", image.originalname, "Size:", image.size);
+
+    // Convert buffer to base64 for Cloudinary (memory storage)
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
 
     // All features are free - everyone can remove backgrounds
-    const { secure_url } = await cloudinary.uploader.upload(image.path, {
+    const { secure_url } = await cloudinary.uploader.upload(base64Image, {
       transformation: [
         {
           effect: "background_removal",
@@ -340,18 +360,20 @@ export const removeImageBackground = async (req, res) => {
     res.json({ success: true, content: secure_url });
   } catch (error) {
     console.error("Error in removeImageBackground:", error);
-    res.json({ success: false, message: error.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    
+    // Handle file size errors
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.json({ 
+        success: false, 
+        message: "File too large. Maximum size is 4MB."
+      });
     }
+    
+    res.json({ success: false, message: error.message });
   }
 };
 
 export const removeImageObject = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const image = req.file;
@@ -372,10 +394,13 @@ export const removeImageObject = async (req, res) => {
       });
     }
 
-    filePath = image.path;
+    console.log("Removing object:", object, "from image:", image.originalname);
+
+    // Convert buffer to base64 for Cloudinary (memory storage)
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString('base64')}`;
 
     // All features are free - everyone can remove objects
-    const { public_id } = await cloudinary.uploader.upload(image.path);
+    const { public_id } = await cloudinary.uploader.upload(base64Image);
 
     const imageUrl = cloudinary.url(public_id, {
       transformation: [{ effect: `gen_remove:${object}` }],
@@ -391,18 +416,20 @@ export const removeImageObject = async (req, res) => {
     res.json({ success: true, content: imageUrl });
   } catch (err) {
     console.error("Error in removeImageObject:", err);
-    res.json({ success: false, message: err.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    
+    // Handle file size errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.json({ 
+        success: false, 
+        message: "File too large. Maximum size is 4MB."
+      });
     }
+    
+    res.json({ success: false, message: err.message });
   }
 };
 
 export const resumeReview = async (req, res) => {
-  let filePath = null;
-
   try {
     const { userId } = req.auth();
     const resume = req.file;
@@ -415,17 +442,18 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    filePath = resume.path;
+    console.log("Reviewing resume:", resume.originalname, "Size:", resume.size);
 
-    // All features are free - everyone can get resume reviews
-    if (resume.size > 5 * 1024 * 1024) {
+    // File size validation (already handled by multer, but double-check)
+    if (resume.size > 4 * 1024 * 1024) {
       return res.json({
         success: false,
-        message: "File size exceeds 5MB limit.",
+        message: "File size exceeds 4MB limit.",
       });
     }
 
-    const dataBuffer = fs.readFileSync(resume.path);
+    // Use buffer from memory storage instead of reading from disk
+    const dataBuffer = resume.buffer;
     const pdfData = await pdf(dataBuffer);
 
     if (!pdfData.text || pdfData.text.trim().length === 0) {
@@ -439,8 +467,9 @@ export const resumeReview = async (req, res) => {
     const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`;
 
     // Use the best available model for resume review
+    // Using gemini-1.5-flash: Best free tier quotas (15 RPM, 250K TPM, 100 RPD)
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
     });
 
     const result = await model.generateContent(prompt);
@@ -459,11 +488,23 @@ export const resumeReview = async (req, res) => {
     res.json({ success: true, content });
   } catch (err) {
     console.error("Error in resumeReview:", err);
-    res.json({ success: false, message: err.message });
-  } finally {
-    // Clean up uploaded file
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    
+    // Handle file size errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.json({ 
+        success: false, 
+        message: "File too large. Maximum size is 4MB."
+      });
     }
+    
+    // Handle quota errors with helpful message
+    if (err.message?.includes('quota') || err.message?.includes('429')) {
+      return res.json({ 
+        success: false, 
+        message: "API quota exceeded. Please wait a few minutes and try again. If this persists, check your Google Cloud API quotas."
+      });
+    }
+    
+    res.json({ success: false, message: err.message });
   }
 };

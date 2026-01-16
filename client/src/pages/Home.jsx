@@ -1,21 +1,16 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import AiTools from "../components/AiTools";
-import Testimonial from "../components/Testimonial";
-import Plan from "../components/Plan";
+import Pricing from "../components/Pricing";
 import Footer from "../components/Footer";
 
 const Home = () => {
-  console.log("Home component rendering...");
-
   return (
-    <div className="bg-[#0A0A0F]">
-      <Navbar />
+    <div className="bg-[#030306]">
+      {/* Hero now includes its own navbar */}
       <Hero />
       <AiTools />
-      <Testimonial />
-      <Plan />
+      <Pricing />
       <Footer />
     </div>
   );

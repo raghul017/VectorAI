@@ -1,76 +1,94 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, isLoaded } = useUser();
   const { openSignIn } = useClerk();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Scroll detection for blur effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Don't render until Clerk is loaded
   if (!isLoaded) {
     return (
       <div className="fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between px-6 sm:px-8 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-            <div className="w-32 h-8 bg-gray-700/50 rounded animate-pulse"></div>
-            <div className="w-96 h-10 bg-gray-700/50 rounded-full animate-pulse hidden md:block"></div>
-            <div className="w-24 h-8 bg-gray-700/50 rounded-full animate-pulse"></div>
+          <div className="flex items-center justify-between px-6 h-16 bg-white/[0.02] backdrop-blur-xl border border-white/[0.06] rounded-2xl">
+            <div className="w-28 h-6 bg-white/10 rounded animate-pulse"></div>
+            <div className="w-20 h-8 bg-white/10 rounded-full animate-pulse"></div>
           </div>
         </div>
       </div>
     );
   }
 
+  const navLinks = [
+    { href: "#home", label: "Home" },
+    { href: "#work", label: "Features" },
+    { href: "#work", label: "AI Tools" },
+    { href: "#testimonials", label: "Reviews" },
+  ];
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 pt-4 animate-slideDown">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 pt-4"
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between px-6 sm:px-8 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        <div
+          className={`flex items-center justify-between px-6 sm:px-8 h-16 
+          backdrop-blur-xl border rounded-2xl transition-all duration-500
+          ${
+            scrolled
+              ? "bg-[#050508]/80 border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+              : "bg-white/[0.02] border-white/[0.06]"
+          }`}
+        >
           {/* Logo */}
           <img
             src={assets.logo}
             alt="logo"
-            className="w-28 sm:w-36 cursor-pointer brightness-200 contrast-125 saturate-150 hover:scale-105 transition-transform duration-300"
+            className="w-24 sm:w-28 cursor-pointer brightness-200 hover:opacity-80 transition-opacity duration-300"
             onClick={() => navigate("/")}
           />
 
           {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full animate-fadeIn animation-delay-200">
-            <a
-              href="#home"
-              className="px-5 py-2 text-sm font-medium text-white hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Home
-            </a>
-            <a
-              href="#work"
-              className="px-5 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Features
-            </a>
-            <a
-              href="#work"
-              className="px-5 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              AI Tools
-            </a>
-            <a
-              href="#testimonials"
-              className="px-5 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Reviews
-            </a>
+          <nav className="hidden md:flex items-center gap-1 px-2">
+            {navLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white 
+                rounded-lg transition-all duration-300"
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
 
           {/* Right side - Login/Register or User Button */}
-          <div className="flex items-center gap-3 animate-fadeIn animation-delay-300">
+          <div className="flex items-center gap-3">
             {user ? (
               <>
                 <button
                   onClick={() => navigate("/ai")}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all transform hover:scale-105"
+                  className="hidden sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-black bg-white rounded-lg 
+                  transition-all duration-300 hover:bg-gray-100"
                 >
                   Dashboard
                   <ArrowRight className="w-4 h-4" />
@@ -81,23 +99,53 @@ const Navbar = () => {
               <>
                 <button
                   onClick={() => openSignIn()}
-                  className="hidden sm:block px-5 py-2 text-sm font-medium text-white hover:text-purple-300 transition-colors"
+                  className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => openSignIn()}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all transform hover:scale-105"
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-black bg-white rounded-lg 
+                  transition-all duration-300 hover:bg-gray-100"
                 >
-                  Register
+                  Get Started
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </>
             )}
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden mt-2 p-4 bg-[#050508]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl"
+          >
+            {navLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-sm font-medium text-gray-400 hover:text-white 
+                hover:bg-white/[0.05] rounded-lg transition-all duration-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </motion.div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

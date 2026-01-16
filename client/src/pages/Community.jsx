@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Users, Image as ImageIcon } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth, useUser } from "@clerk/clerk-react";
@@ -10,6 +10,7 @@ const Community = () => {
   const [creations, setCreations] = useState([]);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
   const { getToken } = useAuth();
 
   const fetchCreations = async () => {
@@ -34,9 +35,7 @@ const Community = () => {
       const { data } = await axios.post(
         "/api/user/toggle-like-creation",
         { id },
-        {
-          headers: { Authorization: `Bearer ${await getToken()}` },
-        }
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
       );
 
       if (data.success) {
@@ -57,87 +56,152 @@ const Community = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  return !loading ? (
-    <div className="h-full overflow-y-scroll bg-[#0A0A0F]">
-      {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+  // Lightbox
+  const openLightbox = (creation) => setSelectedImage(creation);
+  const closeLightbox = () => setSelectedImage(null);
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6 lg:p-8">
+  return !loading ? (
+    <div className="h-full overflow-y-scroll bg-[#050505]">
+      <div className="max-w-6xl mx-auto p-6 lg:p-8 pt-16">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-neutral-500 mb-6">
+          <span>Dashboard</span>
+          <span>/</span>
+          <span className="text-white">Community</span>
+        </div>
+
         {/* Header */}
-        <div className="mb-8 animate-fadeIn">
-          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-            Community Gallery
-          </h1>
-          <p className="text-gray-400">
-            Explore and like amazing AI-generated images from our community
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <Users className="w-6 h-6 text-neutral-400" />
+              <h1 className="text-2xl font-semibold text-white tracking-tight">
+                Community Gallery
+              </h1>
+            </div>
+            <p className="text-neutral-500 text-sm">
+              Explore AI-generated images from our community
+            </p>
+          </div>
+          {creations.length > 0 && (
+            <span className="text-xs text-neutral-500">
+              {creations.length} creation{creations.length !== 1 ? "s" : ""}
+            </span>
+          )}
         </div>
 
         {creations.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-12 text-center animate-scaleIn">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center animate-float">
-              <Heart className="w-10 h-10 text-purple-400" />
+          <div className="rounded-xl border border-neutral-800 p-12 text-center">
+            <div className="w-14 h-14 mx-auto border border-neutral-800 rounded-full flex items-center justify-center mb-4">
+              <Heart className="w-6 h-6 text-neutral-600" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-base font-medium text-white mb-2">
               No creations yet
             </h3>
-            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+            <p className="text-neutral-500 text-sm max-w-sm mx-auto">
               Be the first to share your AI-generated images with the community!
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {creations.map((creation, index) => {
-              const animationDelay = `animation-delay-${Math.min(
-                (index % 6) * 100,
-                500
-              )}`;
-              return (
-                <div
-                  key={index}
-                  className={`relative group bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transform hover:scale-105 animate-scaleIn ${animationDelay}`}
-                >
-                  <img
-                    src={creation.content}
-                    alt={creation.prompt}
-                    className="w-full aspect-square object-cover"
-                  />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {creations.map((creation, index) => (
+              <div
+                key={index}
+                className="group relative rounded-lg border border-neutral-800 overflow-hidden hover:border-neutral-700 transition-all cursor-pointer"
+                onClick={() => openLightbox(creation)}
+              >
+                <img
+                  src={creation.content}
+                  alt={creation.prompt}
+                  className="w-full aspect-square object-cover"
+                />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                    <p className="text-white text-sm font-medium mb-2 line-clamp-2">
-                      {creation.prompt}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-3">
+                  <p className="text-white text-xs font-medium mb-1 line-clamp-2">
+                    {creation.prompt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-neutral-400 text-[10px]">
+                      {creation.user_name || user.fullName}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-gray-300 text-xs">
-                        by {creation.user_name || user.fullName}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white text-sm font-semibold">
-                          {creation.likes.length}
-                        </span>
-                        <Heart
-                          onClick={() => imageLikeToggle(creation.id)}
-                          className={`w-5 h-5 hover:scale-110 cursor-pointer transition-transform ${
-                            creation.likes.includes(user.id)
-                              ? "fill-red-500 text-red-500"
-                              : "text-white hover:text-red-400"
-                          }`}
-                        />
-                      </div>
+                    <div
+                      className="flex items-center gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        imageLikeToggle(creation.id);
+                      }}
+                    >
+                      <span className="text-white text-xs font-medium">
+                        {creation.likes.length}
+                      </span>
+                      <Heart
+                        className={`w-3.5 h-3.5 cursor-pointer transition-colors ${
+                          creation.likes.includes(user.id)
+                            ? "fill-red-500 text-red-500"
+                            : "text-white hover:text-red-400"
+                        }`}
+                      />
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+          onClick={closeLightbox}
+        >
+          <div className="max-w-3xl max-h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={selectedImage.content}
+              alt={selectedImage.prompt}
+              className="max-w-full max-h-[80vh] rounded-lg"
+            />
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-white text-sm">{selectedImage.prompt}</p>
+                <p className="text-neutral-500 text-xs mt-1">
+                  by {selectedImage.user_name || user.fullName}
+                </p>
+              </div>
+              <button
+                onClick={() => imageLikeToggle(selectedImage.id)}
+                className="flex items-center gap-2 px-3 py-1.5 border border-neutral-700 rounded-lg"
+              >
+                <Heart
+                  className={`w-4 h-4 ${
+                    selectedImage.likes.includes(user.id)
+                      ? "fill-red-500 text-red-500"
+                      : "text-white"
+                  }`}
+                />
+                <span className="text-white text-sm">{selectedImage.likes.length}</span>
+              </button>
+            </div>
+            <button
+              onClick={closeLightbox}
+              className="absolute -top-2 -right-2 w-8 h-8 bg-neutral-800 rounded-full flex items-center justify-center text-white hover:bg-neutral-700"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   ) : (
-    <div className="h-full flex items-center justify-center bg-[#0A0A0F]">
-      <div className="flex flex-col items-center gap-4 animate-fadeIn">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
-        <p className="text-gray-400 font-medium">Loading creations...</p>
+    <div className="h-full flex items-center justify-center bg-[#050505]">
+      {/* Skeleton Grid */}
+      <div className="max-w-6xl mx-auto p-6 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="aspect-square bg-neutral-800 rounded-lg animate-pulse" />
+          ))}
+        </div>
       </div>
     </div>
   );
