@@ -10,8 +10,15 @@ import FormData from "form-data";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Initialize AI clients
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Initialize AI clients lazily to prevent crash if env vars missing
+let groqClient = null;
+const getGroq = () => {
+  if (!groqClient && process.env.GROQ_API_KEY) {
+    groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return groqClient;
+};
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Constants
@@ -24,8 +31,11 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Helper: Generate with Groq (Primary)
 const generateWithGroq = async (prompt, systemPrompt = "You are a helpful assistant.") => {
+  const groq = getGroq();
+  if (!groq) throw new Error("Groq API key not configured");
+  
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile", // Latest Llama 3.3 model - fast and powerful
+    model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt }
