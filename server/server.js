@@ -9,8 +9,20 @@ import userRouter from "./routes/userRoutes.js";
 const app = express();
 await connectCloudinary();
 
-// Enable Cross-Origin Resource Sharing (CORS) for the application
-app.use(cors());
+// CORS configuration for cross-origin requests
+const corsOptions = {
+  origin: true, // Allow all origins (or specify: ['https://vectorai-client.vercel.app'])
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 app.use(clerkMiddleware());
 
