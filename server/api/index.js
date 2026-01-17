@@ -35,18 +35,36 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
-// Test AI connection
+// Test AI connection (Groq + Gemini)
 app.get("/test-ai", async (req, res) => {
+  const results = { groq: null, gemini: null };
+  
+  // Test Groq
+  try {
+    const Groq = (await import("groq-sdk")).default;
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: "Say hello" }],
+      max_tokens: 50
+    });
+    results.groq = { success: true, response: response.choices[0]?.message?.content };
+  } catch (err) {
+    results.groq = { success: false, error: err.message };
+  }
+  
+  // Test Gemini
   try {
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent("Say hello");
-    const content = result.response.text();
-    res.json({ success: true, message: "AI connected", response: content });
-  } catch (error) {
-    res.json({ success: false, message: error.message });
+    results.gemini = { success: true, response: result.response.text() };
+  } catch (err) {
+    results.gemini = { success: false, error: err.message };
   }
+  
+  res.json({ success: results.groq?.success || results.gemini?.success, results });
 });
 
 // Test POST endpoint without auth
