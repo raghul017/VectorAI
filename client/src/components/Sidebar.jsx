@@ -9,23 +9,27 @@ import {
   ImagePlus,
   Eraser,
   Scissors,
-  FileCheck,
   Users2,
   LogOut,
   ChevronRight,
   Crown,
   Zap,
   ChevronsLeft,
+  Share2,
+  Mail,
+  ShoppingBag,
 } from "lucide-react";
 
 const navItems = [
   { to: "/ai", label: "Dashboard", icon: LayoutDashboard },
   { to: "/ai/write-article", label: "Write Article", icon: PenTool },
   { to: "/ai/blog-titles", label: "Blog Titles", icon: Hash },
+  { to: "/ai/social-media", label: "Social Media", icon: Share2 },
+  { to: "/ai/email-newsletter", label: "Email Copy", icon: Mail },
+  { to: "/ai/product-description", label: "Product Copy", icon: ShoppingBag },
   { to: "/ai/generate-images", label: "Generate Images", icon: ImagePlus },
   { to: "/ai/remove-background", label: "Remove Background", icon: Eraser },
   { to: "/ai/remove-object", label: "Remove Object", icon: Scissors },
-  { to: "/ai/review-resume", label: "Review Resume", icon: FileCheck },
   { to: "/ai/community", label: "Community", icon: Users2 },
 ];
 

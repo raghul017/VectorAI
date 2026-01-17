@@ -11,17 +11,15 @@ await connectCloudinary();
 
 // CORS configuration for cross-origin requests
 const corsOptions = {
-  origin: true, // Allow all origins (or specify: ['https://vectorai-client.vercel.app'])
+  origin: true, 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // For legacy browser support
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 };
 
 app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(clerkMiddleware());

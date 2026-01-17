@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Gem, Sparkles, TrendingUp, Activity, Crown, Trash2, PenTool, Hash, ImagePlus, Eraser, Scissors, FileCheck, Clock, AlertCircle, RefreshCw, ArrowUpRight } from "lucide-react";
+import { Gem, Sparkles, TrendingUp, Activity, Crown, Trash2, PenTool, Hash, ImagePlus, Eraser, Scissors, Clock, AlertCircle, RefreshCw, ArrowUpRight, Share2, Mail, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
 import CreationItem from "../components/CreationItem.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -11,10 +11,10 @@ axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 const quickActions = [
   { label: "Write Article", desc: "AI-powered articles", icon: PenTool, path: "/ai/write-article", gradient: "from-blue-500/20 to-cyan-500/20", border: "border-blue-500/20", iconColor: "text-blue-400" },
   { label: "Blog Titles", desc: "Catchy headlines", icon: Hash, path: "/ai/blog-titles", gradient: "from-purple-500/20 to-pink-500/20", border: "border-purple-500/20", iconColor: "text-purple-400" },
-  { label: "Generate Image", desc: "Create stunning art", icon: ImagePlus, path: "/ai/generate-images", gradient: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/20", iconColor: "text-emerald-400" },
-  { label: "Remove BG", desc: "Background removal", icon: Eraser, path: "/ai/remove-background", gradient: "from-pink-500/20 to-rose-500/20", border: "border-pink-500/20", iconColor: "text-pink-400" },
-  { label: "Remove Object", desc: "Object eraser", icon: Scissors, path: "/ai/remove-object", gradient: "from-orange-500/20 to-amber-500/20", border: "border-orange-500/20", iconColor: "text-orange-400" },
-  { label: "Review Resume", desc: "AI feedback", icon: FileCheck, path: "/ai/review-resume", gradient: "from-cyan-500/20 to-sky-500/20", border: "border-cyan-500/20", iconColor: "text-cyan-400" },
+  { label: "Social Media", desc: "Posts for any platform", icon: Share2, path: "/ai/social-media", gradient: "from-sky-500/20 to-blue-500/20", border: "border-sky-500/20", iconColor: "text-sky-400" },
+  { label: "Email Copy", desc: "Newsletters & campaigns", icon: Mail, path: "/ai/email-newsletter", gradient: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/20", iconColor: "text-emerald-400" },
+  { label: "Product Copy", desc: "E-commerce listings", icon: ShoppingBag, path: "/ai/product-description", gradient: "from-orange-500/20 to-amber-500/20", border: "border-orange-500/20", iconColor: "text-orange-400" },
+  { label: "Generate Image", desc: "Create stunning art", icon: ImagePlus, path: "/ai/generate-images", gradient: "from-pink-500/20 to-rose-500/20", border: "border-pink-500/20", iconColor: "text-pink-400" },
 ];
 
 export default function DashBoard() {
@@ -22,6 +22,8 @@ export default function DashBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [showAllCreations, setShowAllCreations] = useState(false);
+  const [hoveredBar, setHoveredBar] = useState(null);
   const { getToken } = useAuth();
 
   const getDashboardData = async () => {
@@ -143,9 +145,17 @@ export default function DashBoard() {
           </div>
           <div className="flex items-end justify-between gap-3 h-28">
             {activityData.map((day, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2">
+              <div key={i} className="flex-1 flex flex-col items-center gap-2 relative"
+                onMouseEnter={() => setHoveredBar(i)}
+                onMouseLeave={() => setHoveredBar(null)}>
+                {/* Tooltip */}
+                {hoveredBar === i && (
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-neutral-800 border border-neutral-700 rounded-lg text-xs text-white whitespace-nowrap z-10">
+                    {day.count} {day.count === 1 ? 'creation' : 'creations'}
+                  </div>
+                )}
                 <div className="w-full flex justify-center">
-                  <div className="w-full max-w-[50px] bg-gradient-to-t from-violet-600/80 to-purple-500/80 rounded-t-lg transition-all hover:from-violet-500 hover:to-purple-400"
+                  <div className={`w-full max-w-[50px] bg-gradient-to-t from-violet-600/80 to-purple-500/80 rounded-t-lg transition-all cursor-pointer ${hoveredBar === i ? 'from-violet-500 to-purple-400' : ''}`}
                     style={{ height: `${Math.max((day.count / maxActivity) * 90, 6)}px` }} />
                 </div>
                 <span className="text-[11px] text-neutral-500">{day.day}</span>
@@ -186,8 +196,19 @@ export default function DashBoard() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {creations.slice(0, 5).map((item) => <CreationItem key={item.id} item={item} onDelete={deleteCreation} />)}
-                    {creations.length > 5 && <p className="text-center text-xs text-neutral-500 py-3">+{creations.length - 5} more creations</p>}
+                    {(showAllCreations ? creations : creations.slice(0, 5)).map((item) => <CreationItem key={item.id} item={item} onDelete={deleteCreation} />)}
+                    {creations.length > 5 && (
+                      <button 
+                        onClick={() => setShowAllCreations(!showAllCreations)}
+                        className="w-full flex items-center justify-center gap-2 py-3 text-xs text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700 rounded-xl bg-neutral-800/30 hover:bg-neutral-800/50 transition-all"
+                      >
+                        {showAllCreations ? (
+                          <><ChevronUp className="w-4 h-4" /> Show Less</>
+                        ) : (
+                          <><ChevronDown className="w-4 h-4" /> View All {creations.length} Creations</>
+                        )}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
