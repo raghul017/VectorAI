@@ -60,10 +60,20 @@ const Pricing = () => {
       <div className="max-w-6xl mx-auto">
         {/* Main Card Container */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            show: {
+              opacity: 1,
+              y: 0,
+              transition: {
+                duration: 0.6,
+                staggerChildren: 0.15
+              }
+            }
+          }}
           className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0a0a0f]"
         >
           {/* Decorative blurs */}
@@ -73,18 +83,19 @@ const Pricing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch">
             {/* LEFT: Copy + Plan list */}
             <div className="p-6 sm:p-10 flex flex-col">
-              {/* Heading */}
-              <h2 className="text-4xl sm:text-5xl font-semibold text-white tracking-tight">
-                Simple pricing
-                <span className="block text-gray-400">that grows with you</span>
-              </h2>
-
-              <p className="mt-4 text-base text-gray-400 max-w-md">
-                Pick a plan today and switch anytime. Clear value across Starter, Pro, and Enterprise.
-              </p>
+              {/* Header */}
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>
+                <h2 className="text-4xl sm:text-5xl font-semibold text-white tracking-tight">
+                  Simple pricing
+                  <span className="block text-gray-400">that grows with you</span>
+                </h2>
+                <p className="mt-4 text-base text-gray-400 max-w-md">
+                  Pick a plan today and switch anytime. Clear value across Starter, Pro, and Enterprise.
+                </p>
+              </motion.div>
 
               {/* Billing Toggle */}
-              <div className="mt-6">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="mt-6">
                 <div className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.05] p-1">
                   <button
                     onClick={() => setBilling("monthly")}
@@ -107,10 +118,10 @@ const Pricing = () => {
                     Annually
                   </button>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Plan list */}
-              <div className="mt-10 space-y-3">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="mt-10 space-y-3">
                 {Object.entries(plans).map(([key, plan]) => (
                   <button
                     key={key}
@@ -130,7 +141,7 @@ const Pricing = () => {
                     </span>
                   </button>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* RIGHT: Plan detail */}

@@ -11,36 +11,53 @@ const AiTools = () => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
+
   // Feature grid data
   const features = [
     {
-      title: "Requests & revisions",
-      description: "Iterate quickly with async requests and structured feedback. Every round ends with clear rationale.",
-      image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop",
+      title: "Instant Generation",
+      description: "Generate high-quality content in seconds. No waiting queues, just immediate results.",
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop", 
       isNew: true,
     },
     {
-      title: "Worry-free pricing",
-      description: "Simple plans, no surprises. Pause anytime. Scale up when you're ready.",
-      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&auto=format&fit=crop",
+      title: "All-in-One Suite",
+      description: "Access powerful tools for text, images, and editing in a single professional dashboard.",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop", // Dashboard/UI
       isNew: true,
     },
     {
-      title: "Quick turnaround",
-      description: "Most tasks ship in 48-72 hours without sacrificing quality.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop",
+      title: "Professional Quality",
+      description: "Enterprise-grade AI models ensure your content is polished and ready for production.",
+      image: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=800&auto=format&fit=crop", // Abstract High-End/Polished
     },
     {
-      title: "Go live in days",
-      description: "From first brief to live campaigns in a week, with tracking and QA handled.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop",
+      title: "Export & Publish",
+      description: "Download your creations instantly or copy them directly to your workflow.",
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop", // Digital Transfer/Tech
     },
     {
-      title: "Analytics & Insights",
-      description: "Track performance with real-time analytics and AI-powered recommendations.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop",
+      title: "Secure History",
+      description: "Keep a private archive of all your generations and iterate on your best ideas.",
+      image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&auto=format&fit=crop", // Encryption/Code/Security
     },
   ];
+
+// ... (omitting unchanged code) ...
+
+            {/* Stats */}
+            <div className="border-t border-white/10 pt-6 mt-8">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="hover:scale-105 transition-transform cursor-pointer">
+                  <span className="text-2xl tracking-tight font-medium text-white">Advanced</span>
+                  <p className="text-xs text-white/60">AI Models</p>
+                </div>
+                <div className="hover:scale-105 transition-transform cursor-pointer">
+                  <span className="text-2xl tracking-tight font-medium text-white">Instant</span>
+                  <p className="text-xs text-white/60">Content Creation</p>
+                </div>
+              </div>
+            </div>
 
   return (
     <div ref={sectionRef} className="relative bg-black overflow-hidden">
@@ -54,12 +71,12 @@ const AiTools = () => {
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10"
         >
           <div>
-            <p className="text-sm font-medium text-white/50">What you get</p>
+            <p className="text-sm font-medium text-white/50">Why VectorAI</p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white">
-              Features built for efficient growth
+              Everything you need to create
             </h2>
             <p className="mt-3 text-base text-white/70 max-w-2xl">
-              From unlimited creative requests to transparent pricing, our AI platform helps you scale content with confidence.
+              From instant content generation to transparent pricing, our AI platform helps you scale content creation with confidence.
             </p>
           </div>
         </motion.div>
@@ -86,9 +103,9 @@ const AiTools = () => {
                 <span className="inline-flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-500/15 px-2 py-0.5 text-[11px] font-medium text-purple-300">NEW</span>
                 <span className="text-xs text-white/60">Unlimited pipeline</span>
               </div>
-              <h3 className="mt-3 text-2xl sm:text-3xl font-medium tracking-tight text-white">Launch experiments, not guesses</h3>
+              <h3 className="mt-3 text-2xl sm:text-3xl font-medium tracking-tight text-white">Create at the speed of thought</h3>
               <p className="mt-2 text-sm sm:text-base text-white/70">
-                Submit unlimited content ideas and creative requests. We prioritize by impact, ship fast, and report clearly so learnings stack every week.
+                Unlock instant access to a suite of professional AI tools. Generate articles, stunning images, and engaging social posts in seconds—empowering you to move faster than ever.
               </p>
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <button className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur hover:bg-white/10 transition">
@@ -106,14 +123,15 @@ const AiTools = () => {
             </div>
           </motion.div>
 
-          {/* Small Feature Cards */}
+          {/* Small Feature Cards top row */}
           {features.slice(0, 2).map((feature, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
-              className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
+              className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-colors"
             >
               <div className="p-5 sm:p-6">
                 <div className="flex items-center justify-between">
@@ -126,7 +144,13 @@ const AiTools = () => {
                 </div>
                 <p className="mt-2 text-sm text-white/70">{feature.description}</p>
                 <div className="mt-4 rounded-lg overflow-hidden border border-white/10">
-                  <img src={feature.image} alt={feature.title} className="aspect-video w-full object-cover" />
+                  <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4 }}
+                    src={feature.image} 
+                    alt={feature.title} 
+                    className="aspect-video w-full object-cover" 
+                  />
                 </div>
               </div>
             </motion.div>
@@ -136,10 +160,11 @@ const AiTools = () => {
           {features.slice(2).map((feature, index) => (
             <motion.div
               key={index + 2}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 * (index + 3) }}
-              className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: (index + 2) * 0.15 }}
+              className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-colors"
             >
               <div className="p-5 sm:p-6">
                 <h3 className="text-lg font-medium tracking-tight text-white flex items-center gap-2">
@@ -147,7 +172,13 @@ const AiTools = () => {
                 </h3>
                 <p className="mt-2 text-sm text-white/70">{feature.description}</p>
                 <div className="mt-4 rounded-lg overflow-hidden border border-white/10">
-                  <img src={feature.image} alt={feature.title} className="aspect-video w-full object-cover" />
+                  <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4 }}
+                    src={feature.image} 
+                    alt={feature.title} 
+                    className="aspect-video w-full object-cover" 
+                  />
                 </div>
               </div>
             </motion.div>
@@ -185,7 +216,12 @@ const AiTools = () => {
                 {/* UI Mockup */}
                 <div className="relative h-56 sm:h-64 rounded-2xl bg-gradient-to-b from-white/5 to-white/10 ring-1 ring-inset ring-white/5 mb-8 backdrop-blur-sm overflow-hidden">
                   {/* Main window */}
-                  <div className="absolute right-4 sm:right-6 top-4 sm:top-6 w-[75%] h-[65%] rounded-2xl bg-black/90 backdrop-blur border border-white/10 shadow-lg">
+                  <motion.div 
+                    initial={{ x: 50, y: -20, opacity: 0 }}
+                    animate={isInView ? { x: 0, y: 0, opacity: 1 } : {}}
+                    transition={{ duration: 0.8, delay: 0.4, type: "spring" }}
+                    className="absolute right-4 sm:right-6 top-4 sm:top-6 w-[75%] h-[65%] rounded-2xl bg-black/90 backdrop-blur border border-white/10 shadow-lg"
+                  >
                     <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">
                       <div className="flex gap-1.5">
                         <div className="w-2 h-2 rounded-full bg-red-400" />
@@ -205,10 +241,15 @@ const AiTools = () => {
                         <div className="h-1.5 w-16 bg-white/20 rounded" />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Tools sidebar */}
-                  <div className="absolute left-4 sm:left-8 bottom-8 sm:bottom-10 w-[58%] h-[48%] rounded-2xl bg-black/90 backdrop-blur border border-white/10 shadow-lg">
+                  <motion.div 
+                    initial={{ x: -30, y: 30, opacity: 0 }}
+                    animate={isInView ? { x: 0, y: 0, opacity: 1 } : {}}
+                    transition={{ duration: 0.8, delay: 0.6, type: "spring" }}
+                    className="absolute left-4 sm:left-8 bottom-8 sm:bottom-10 w-[58%] h-[48%] rounded-2xl bg-black/90 backdrop-blur border border-white/10 shadow-lg"
+                  >
                     <div className="px-3 py-2 border-b border-white/10">
                       <span className="text-xs text-white/60 tracking-widest">AI TOOLS</span>
                     </div>
@@ -222,7 +263,7 @@ const AiTools = () => {
                         <span className="text-white/80">Images</span>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Features grid */}
@@ -284,12 +325,12 @@ const AiTools = () => {
             <div className="border-t border-white/10 pt-6 mt-8">
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="hover:scale-105 transition-transform cursor-pointer">
-                  <span className="text-2xl tracking-tight font-medium text-white">10,000+</span>
-                  <p className="text-xs text-white/60">Creators using daily</p>
+                  <span className="text-2xl tracking-tight font-medium text-white">Advanced</span>
+                  <p className="text-xs text-white/60">AI Models</p>
                 </div>
                 <div className="hover:scale-105 transition-transform cursor-pointer">
-                  <span className="text-2xl tracking-tight font-medium text-white">50k+</span>
-                  <p className="text-xs text-white/60">Articles generated</p>
+                  <span className="text-2xl tracking-tight font-medium text-white">Instant</span>
+                  <p className="text-xs text-white/60">Content Creation</p>
                 </div>
               </div>
             </div>

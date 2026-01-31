@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowUpRight, FileText, Pen, Image, Eraser, Users, Sparkles, PlayCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowUpRight, FileText, Pen, Image, Eraser, Users, Sparkles, PlayCircle, ArrowRight, Menu, X } from "lucide-react";
+import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const { openSignIn } = useClerk();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Professional icons for the tool row (matching reference metallic style)
   const toolIcons = [
@@ -70,7 +74,95 @@ const Hero = () => {
             <a href="#pricing" className="text-gray-500 text-sm hover:text-white transition-colors">Pricing</a>
             <a href="#contact" className="text-gray-500 text-sm hover:text-white transition-colors">Contact</a>
           </div>
+
+          {/* Right side - Login/Register or User Button */}
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <button
+                  onClick={() => navigate("/ai")}
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white rounded-full 
+                  transition-all duration-300 hover:bg-gray-200 hover:scale-105"
+                >
+                  Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <UserButton afterSignOutUrl="/" />
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => openSignIn()}
+                  className="hidden sm:block text-gray-400 text-sm font-medium hover:text-white transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => openSignIn()}
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-white rounded-full 
+                  transition-all duration-300 hover:bg-gray-200 hover:scale-105"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
+
+            {/* Mobile Menu Toggle */}
+            <button 
+              className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-t border-white/10 overflow-hidden"
+            >
+              <div className="flex flex-col p-6 space-y-6">
+                <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-white text-lg font-medium">Home</a>
+                <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-gray-400 text-lg font-medium hover:text-white">Features</a>
+                <a href="#tools" onClick={() => setMobileMenuOpen(false)} className="text-gray-400 text-lg font-medium hover:text-white">AI Suite</a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-gray-400 text-lg font-medium hover:text-white">Pricing</a>
+                <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-gray-400 text-lg font-medium hover:text-white">Contact</a>
+                
+                <div className="h-px bg-white/10 w-full my-4" />
+                
+                {user ? (
+                  <button
+                    onClick={() => { navigate("/ai"); setMobileMenuOpen(false); }}
+                    className="flex items-center justify-center gap-2 px-4 py-3 text-base font-semibold text-black bg-white rounded-xl"
+                  >
+                    Dashboard
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={() => { openSignIn(); setMobileMenuOpen(false); }}
+                      className="w-full px-4 py-3 text-base font-semibold text-white border border-white/20 rounded-xl hover:bg-white/5"
+                    >
+                      Login
+                    </button>
+                    <button
+                      onClick={() => { openSignIn(); setMobileMenuOpen(false); }}
+                      className="w-full px-4 py-3 text-base font-semibold text-black bg-white rounded-xl hover:bg-gray-200"
+                    >
+                      Get Started
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Content */}
@@ -103,16 +195,26 @@ const Hero = () => {
 
         {/* Professional Metallic Icons Row */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+            }
+          }}
+          initial="hidden"
+          animate="show"
           className="flex items-center justify-center gap-3 mb-10"
         >
           {toolIcons.map((tool, i) => (
-            <div
+            <motion.div
               key={i}
-              className="w-14 h-14 rounded-full flex items-center justify-center cursor-pointer
-                transition-transform hover:scale-110"
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.8 },
+                show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300 } }
+              }}
+              whileHover={{ scale: 1.1, y: -5 }}
+              className="w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
               style={{
                 background: "linear-gradient(145deg, rgba(60, 50, 100, 0.8) 0%, rgba(40, 35, 70, 0.9) 100%)",
                 border: "1px solid rgba(120, 100, 180, 0.3)",
@@ -120,7 +222,7 @@ const Hero = () => {
               }}
             >
               <tool.Icon className="w-6 h-6 text-gray-300" />
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
@@ -128,7 +230,7 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
           className="flex items-center gap-4"
         >
           {/* Primary CTA - Shiny Animated Button */}
